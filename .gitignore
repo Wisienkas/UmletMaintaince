@@ -1,3 +1,5 @@
 .svn/
 bin/
 *.class
+
+\log4j.log
