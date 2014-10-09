@@ -10,6 +10,7 @@ import static com.baselet.control.MenuConstants.EDIT_SELECTED;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.MAIL_TO;
 import static com.baselet.control.MenuConstants.NEW_CE;
 import static com.baselet.control.MenuConstants.NEW_FROM_TEMPLATE;
@@ -208,6 +209,10 @@ public class MenuFactoryEclipse extends MenuFactory {
 
 	public IAction createGenerateOptions() {
 		return createAction(GENERATE_CLASS_OPTIONS, null);
+	}
+
+	public IAction createGenerateCode() {
+		return createAction(GENERATE_CODE, null);
 	}
 
 	public IMenuManager createZoom() {

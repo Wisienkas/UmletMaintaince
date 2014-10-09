@@ -13,6 +13,7 @@ import static com.baselet.control.MenuConstants.EXIT;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.GROUP;
 import static com.baselet.control.MenuConstants.LAYER;
 import static com.baselet.control.MenuConstants.LAYER_DOWN;
@@ -90,6 +91,10 @@ public class MenuFactory {
 				}
 				else if (menuItem.equals(RECENT_FILES)) {
 					main.doOpen((String) param);
+				}
+				else if (menuItem.equals(GENERATE_CODE))
+				{
+					// TODO add code to be executed
 				}
 				else if (menuItem.equals(GENERATE_CLASS)) {
 					new ClassDiagramConverter().createClassDiagrams(ClassChooser.getFilesToOpen());

@@ -12,6 +12,7 @@ import static com.baselet.control.MenuConstants.EXIT;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.GROUP;
 import static com.baselet.control.MenuConstants.LAYER;
 import static com.baselet.control.MenuConstants.LAYER_DOWN;
@@ -99,6 +100,10 @@ public class MenuFactorySwing extends MenuFactory {
 
 	public JMenuItem createGenerate() {
 		return createJMenuItem(false, GENERATE_CLASS, null);
+	}
+
+	public JMenuItem createGenerateCode() {
+		return createJMenuItem(false, GENERATE_CODE, null);
 	}
 
 	public JMenuItem createGenerateOptions() {
