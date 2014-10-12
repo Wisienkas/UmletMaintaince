@@ -1,3 +1,9 @@
 .svn/
 bin/
 *.class
+
+
+Baselet/log4j.log
+BaseletGWT/.gwt/
+BaseletGWT/war/WEB-INF/classes/
+
