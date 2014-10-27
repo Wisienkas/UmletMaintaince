@@ -11,15 +11,16 @@ import com.baselet.diagram.draw.geom.Point;
 import com.baselet.diagram.draw.geom.Rectangle;
 import com.baselet.diagram.draw.swing.Converter;
 import com.baselet.diagram.draw.swing.DrawHandlerSwing;
+import com.baselet.element.GridElement;
 import com.baselet.elementnew.Component;
 import com.baselet.elementnew.NewGridElement;
 
 public class ComponentSwing extends JComponent implements Component {
 	private static final long serialVersionUID = 1L;
 
-	private DrawHandlerSwing drawer;
-	private DrawHandlerSwing metaDrawer;
-	private NewGridElement gridElement;
+	private final DrawHandlerSwing drawer;
+	private final DrawHandlerSwing metaDrawer;
+	private final NewGridElement gridElement;
 
 	public ComponentSwing(NewGridElement gridElement) {
 		this.gridElement = gridElement;
@@ -96,6 +97,10 @@ public class ComponentSwing extends JComponent implements Component {
 	@Override
 	public void afterModelUpdate() {
 		repaint(); // necessary e.g. for NewGridElement Relation to make sure it gets redrawn correctly when a sticking element is moved around
+	}
+
+	public GridElement getGridElement() {
+		return gridElement;
 	}
 
 }
