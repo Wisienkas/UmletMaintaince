@@ -277,4 +277,5 @@ public abstract class Constants extends SharedConstants {
 	public static boolean mail_gif = true;
 	public static boolean mail_pdf = false;
 
+	public static String last_saved_path = System.getProperty("user.dir");
 }

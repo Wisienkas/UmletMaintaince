@@ -58,6 +58,8 @@ public class ConfigHandler {
 	private static final String GENERATE_CLASS_SIGNATURES = "generate_class_signatures";
 	private static final String GENERATE_CLASS_SORTINGS = "generate_class_sortings";
 
+	private static final String LAST_SAVED_PATH = "last_saved_path";
+
 	private static File configfile;
 	private static Properties props;
 
@@ -93,6 +95,7 @@ public class ConfigHandler {
 		Constants.pdfExportFont = getStringProperty(PDF_EXPORT_FONT, Constants.pdfExportFont);
 		Constants.checkForUpdates = getBoolProperty(CHECK_FOR_UPDATES, Constants.checkForUpdates);
 		Constants.openFileHome = getStringProperty(OPEN_FILE_HOME, Constants.openFileHome);
+		Constants.last_saved_path = getStringProperty(LAST_SAVED_PATH, Constants.last_saved_path);
 		SharedConstants.dev_mode = getBoolProperty(DEV_MODE, SharedConstants.dev_mode);
 
 		// only set last used palette if its a valid palette and if the program version has not changed, otherwise leave the default value
@@ -165,6 +168,8 @@ public class ConfigHandler {
 			props.setProperty(OPEN_FILE_HOME, Constants.openFileHome);
 			props.setProperty(DEV_MODE, Boolean.toString(SharedConstants.dev_mode));
 			props.setProperty(LAST_USED_PALETTE, Constants.lastUsedPalette);
+
+			props.setProperty(LAST_SAVED_PATH, Constants.last_saved_path);
 
 			BaseGUI gui = Main.getInstance().getGUI();
 			props.setProperty(MAIN_SPLIT_POSITION, Integer.toString(gui.getMainSplitPosition()));
