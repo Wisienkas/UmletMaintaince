@@ -48,7 +48,9 @@ public class ClassCodeConverter {
 			for (String file : files)
 			{
 				File f = new File(dir, file);
-				if (f.getParentFile().mkdirs())
+				File parent = f.getParentFile();
+
+				if (parent.exists() || parent.mkdirs())
 				{
 					try {
 						f.createNewFile();
