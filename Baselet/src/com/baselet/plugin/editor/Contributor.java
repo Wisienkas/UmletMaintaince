@@ -33,7 +33,7 @@ public class Contributor extends EditorActionBarContributor {
 		COPY, CUT, PASTE, SELECTALL
 	}
 
-	private MenuFactoryEclipse menuFactory = MenuFactoryEclipse.getInstance();
+	private final MenuFactoryEclipse menuFactory = MenuFactoryEclipse.getInstance();
 
 	private IAction customnew;
 	private IAction customedit;
@@ -138,6 +138,8 @@ public class Contributor extends EditorActionBarContributor {
 
 		menu.add(menuFactory.createGenerate());
 		menu.add(menuFactory.createGenerateOptions());
+		// PACKAGE DIAGRAM CHANGE DIAGRAM
+		menu.add(menuFactory.createGeneratePackageDiagram());
 
 		zoomMenu = menuFactory.createZoom();
 		menu.add(zoomMenu);
