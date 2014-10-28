@@ -43,7 +43,7 @@ public class ClassCodeConverter {
 
 		File dir = new File(path);
 
-		if (dir.mkdirs())
+		if (dir.exists() || dir.mkdirs())
 		{
 			for (String file : files)
 			{
