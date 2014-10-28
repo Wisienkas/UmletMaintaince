@@ -13,6 +13,7 @@ import static com.baselet.control.MenuConstants.EXIT;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_PACKAGE_DIAGRAM;
 import static com.baselet.control.MenuConstants.GROUP;
 import static com.baselet.control.MenuConstants.LAYER;
 import static com.baselet.control.MenuConstants.LAYER_DOWN;
@@ -68,6 +69,7 @@ import com.baselet.elementnew.facet.common.LayerFacet;
 import com.baselet.gui.standalone.StandaloneGUI;
 import com.umlet.custom.CustomElement;
 import com.umlet.language.ClassDiagramConverter;
+import com.umlet.language.PackageDiagramConverter;
 
 public class MenuFactory {
 
@@ -93,6 +95,10 @@ public class MenuFactory {
 				}
 				else if (menuItem.equals(GENERATE_CLASS)) {
 					new ClassDiagramConverter().createClassDiagrams(ClassChooser.getFilesToOpen());
+				}
+				// PACKAGE DIAGRAM CHANGE REQUEST
+				else if (menuItem.equals(GENERATE_PACKAGE_DIAGRAM)) {
+					new PackageDiagramConverter().createPackageDiagrams(ClassChooser.getFilesToOpen());
 				}
 				else if (menuItem.equals(GENERATE_CLASS_OPTIONS)) {
 					GenerateOptionPanel.getInstance().showPanel();
