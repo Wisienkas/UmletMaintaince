@@ -96,7 +96,8 @@ public class MenuFactory {
 				}
 				else if (menuItem.equals(GENERATE_CODE))
 				{
-					new ClassCodeConverter().createCodeDiagrams(SaveFileChooser.getFileToSave());
+					new ClassCodeConverter().createCodeDiagrams(SaveFileChooser.getFileToSave(),
+							diagramHandler.getDrawPanel().getGridElements());
 				}
 				else if (menuItem.equals(GENERATE_CLASS)) {
 					new ClassDiagramConverter().createClassDiagrams(ClassChooser.getFilesToOpen());

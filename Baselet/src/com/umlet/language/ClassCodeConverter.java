@@ -3,18 +3,14 @@ package com.umlet.language;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import com.baselet.control.Main;
 import com.baselet.element.GridElement;
 
 public class ClassCodeConverter {
 
-	public void createCodeDiagrams(String path) {
+	public void createCodeDiagrams(String path, List<GridElement> elements) {
 		List<String> files = new ArrayList<String>();
-
-		List<GridElement> elements = Main.getInstance().getDiagramHandler().getDrawPanel().getGridElements();
 
 		for (GridElement e : elements)
 		{
