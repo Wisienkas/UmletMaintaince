@@ -47,6 +47,8 @@ public class MenuBuilder {
 		fileMenu.addSeparator();
 		fileMenu.add(menuFactory.createGenerate());
 		fileMenu.add(menuFactory.createGenerateOptions());
+		// PACKAGE DIAGRAM CHANGE REQUEST
+		fileMenu.add(menuFactory.createGeneratePackageDiagram());
 		fileMenu.addSeparator();
 		fileMenu.add(menuFactory.createSave());
 		fileMenu.add(menuFactory.createSaveAs());
