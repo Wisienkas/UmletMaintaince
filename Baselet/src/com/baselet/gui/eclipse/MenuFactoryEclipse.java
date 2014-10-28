@@ -10,6 +10,7 @@ import static com.baselet.control.MenuConstants.EDIT_SELECTED;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_PACKAGE_DIAGRAM;
 import static com.baselet.control.MenuConstants.MAIL_TO;
 import static com.baselet.control.MenuConstants.NEW_CE;
 import static com.baselet.control.MenuConstants.NEW_FROM_TEMPLATE;
@@ -210,6 +211,11 @@ public class MenuFactoryEclipse extends MenuFactory {
 		return createAction(GENERATE_CLASS_OPTIONS, null);
 	}
 
+	// PACKAGE DIAGRAM CHANGE REQUEST
+	public IAction createGeneratePackageDiagram() {
+		return createAction(GENERATE_PACKAGE_DIAGRAM, null);
+	}
+
 	public IMenuManager createZoom() {
 		final IMenuManager zoom = new MenuManager(ZOOM);
 		for (String z : Constants.zoomValueList) {
@@ -218,7 +224,7 @@ public class MenuFactoryEclipse extends MenuFactory {
 		return zoom;
 	}
 
-	private List<Action> aList = new ArrayList<Action>();
+	private final List<Action> aList = new ArrayList<Action>();
 
 	public IMenuManager createNewCustomElementFromTemplate(final Contributor con) {
 		IMenuManager menu = new MenuManager(NEW_FROM_TEMPLATE);
