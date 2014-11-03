@@ -18,6 +18,7 @@ import com.baselet.elementnew.facet.common.ElementStyleFacet.ElementStyleEnum;
 import com.baselet.elementnew.facet.common.FontSizeFacet;
 import com.baselet.elementnew.facet.common.ForegroundColorFacet;
 import com.baselet.elementnew.facet.common.GroupFacet;
+import com.baselet.elementnew.facet.common.HierarchyRelation;
 import com.baselet.elementnew.facet.common.HorizontalAlignFacet;
 import com.baselet.elementnew.facet.common.LayerFacet;
 import com.baselet.elementnew.facet.common.LineTypeFacet;
@@ -28,7 +29,7 @@ public abstract class Settings {
 	protected static final List<? extends Facet> NOTEXT = Arrays.asList(BackgroundColorFacet.INSTANCE, ForegroundColorFacet.INSTANCE, LayerFacet.INSTANCE, LineWidthFacet.INSTANCE, GroupFacet.INSTANCE, LineTypeFacet.INSTANCE);
 	protected static final List<? extends Facet> RELATION = Arrays.asList(BackgroundColorFacet.INSTANCE, ForegroundColorFacet.INSTANCE, LayerFacet.INSTANCE, LineWidthFacet.INSTANCE, GroupFacet.INSTANCE, FontSizeFacet.INSTANCE);
 	protected static final List<? extends Facet> AUTORESIZE = Arrays.asList(BackgroundColorFacet.INSTANCE, ForegroundColorFacet.INSTANCE, LayerFacet.INSTANCE, LineWidthFacet.INSTANCE, GroupFacet.INSTANCE, FontSizeFacet.INSTANCE, LineTypeFacet.INSTANCE, HorizontalAlignFacet.INSTANCE);
-	protected static final List<? extends Facet> ALL = Arrays.asList(BackgroundColorFacet.INSTANCE, ForegroundColorFacet.INSTANCE, LayerFacet.INSTANCE, LineWidthFacet.INSTANCE, GroupFacet.INSTANCE, FontSizeFacet.INSTANCE, LineTypeFacet.INSTANCE, HorizontalAlignFacet.INSTANCE, VerticalAlignFacet.INSTANCE, ElementStyleFacet.INSTANCE);
+	protected static final List<? extends Facet> ALL = Arrays.asList(BackgroundColorFacet.INSTANCE, ForegroundColorFacet.INSTANCE, LayerFacet.INSTANCE, LineWidthFacet.INSTANCE, GroupFacet.INSTANCE, FontSizeFacet.INSTANCE, LineTypeFacet.INSTANCE, HorizontalAlignFacet.INSTANCE, VerticalAlignFacet.INSTANCE, ElementStyleFacet.INSTANCE, HierarchyRelation.INSTANCE);
 
 	/**
 	 * calculates the left and right x value for a certain y value
@@ -45,7 +46,7 @@ public abstract class Settings {
 	 * facets are checked and applied during text parsing.
 	 * e.g. if a line matches "--" and the facet SeparatorLine is setup for the current element,
 	 * a separator line will be drawn instead of printing the text.
-	 * 
+	 *
 	 * Global facets are parsed before any other ones, because they influence the whole diagram, even if they are located at the bottom
 	 * e.g. fg=red could be located at the bottom, but will still be applied to the whole text
 	 */

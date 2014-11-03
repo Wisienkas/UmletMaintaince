@@ -11,6 +11,7 @@ import com.baselet.elementnew.ElementId;
 import com.baselet.elementnew.NewGridElement;
 import com.baselet.elementnew.PropertiesParserState;
 import com.baselet.elementnew.facet.Facet;
+import com.baselet.elementnew.facet.common.AutosizeFacet;
 import com.baselet.elementnew.facet.common.SeparatorLineWithHalignChangeFacet;
 import com.baselet.elementnew.facet.specific.ActiveClassFacet;
 import com.baselet.elementnew.facet.specific.InnerClassFacet;
@@ -25,7 +26,11 @@ public class Class extends NewGridElement {
 		return new SettingsManualResizeTop() {
 			@Override
 			public List<? extends Facet> createFacets() {
-				return Arrays.asList(InnerClassFacet.INSTANCE, SeparatorLineWithHalignChangeFacet.INSTANCE, ActiveClassFacet.INSTANCE, TemplateClassFacet.INSTANCE);
+				return Arrays.asList(InnerClassFacet.INSTANCE,
+						SeparatorLineWithHalignChangeFacet.INSTANCE,
+						ActiveClassFacet.INSTANCE,
+						TemplateClassFacet.INSTANCE,
+						AutosizeFacet.INSTANCE);
 			}
 		};
 	}
@@ -49,5 +54,4 @@ public class Class extends NewGridElement {
 			state.setStickingPolygonGenerator(new PointDoubleStickingPolygonGenerator(points));
 		}
 	}
-
 }

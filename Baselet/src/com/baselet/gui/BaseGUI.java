@@ -82,6 +82,8 @@ public abstract class BaseGUI {
 		contextMenu.add(createAlignmentMenu(menuFactory));
 		contextMenu.add(createLayerMenu(menuFactory));
 
+		contextMenu.add(menuFactory.createRelateAround(e));
+
 		return contextMenu;
 	}
 

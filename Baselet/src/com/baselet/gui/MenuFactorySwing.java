@@ -12,6 +12,7 @@ import static com.baselet.control.MenuConstants.EXIT;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_PACKAGE_DIAGRAM;
 import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.GROUP;
 import static com.baselet.control.MenuConstants.LAYER;
@@ -31,6 +32,7 @@ import static com.baselet.control.MenuConstants.PROGRAM_HOMEPAGE;
 import static com.baselet.control.MenuConstants.RATE_PROGRAM;
 import static com.baselet.control.MenuConstants.RECENT_FILES;
 import static com.baselet.control.MenuConstants.REDO;
+import static com.baselet.control.MenuConstants.RELATE_AROUND;
 import static com.baselet.control.MenuConstants.SAVE;
 import static com.baselet.control.MenuConstants.SAVE_AS;
 import static com.baselet.control.MenuConstants.SELECT_ALL;
@@ -40,9 +42,14 @@ import static com.baselet.control.MenuConstants.UNDO;
 import static com.baselet.control.MenuConstants.UNGROUP;
 import static com.baselet.control.MenuConstants.VIDEO_TUTORIAL;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -52,13 +59,20 @@ import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import org.apache.log4j.Logger;
+
 import com.baselet.control.Constants;
 import com.baselet.control.Constants.Os;
 import com.baselet.control.Constants.SystemInfo;
 import com.baselet.control.Main;
 import com.baselet.diagram.draw.helper.ColorOwn;
+import com.baselet.element.GridElement;
+import com.baselet.gui.menu.ClassMenuItemPointer;
+import com.umlet.elementnew.ComponentSwing;
 
 public class MenuFactorySwing extends MenuFactory {
+
+	private static Logger log = Logger.getLogger(MenuFactorySwing.class);
 
 	private static MenuFactorySwing instance = null;
 
@@ -108,6 +122,11 @@ public class MenuFactorySwing extends MenuFactory {
 
 	public JMenuItem createGenerateOptions() {
 		return createJMenuItem(false, GENERATE_CLASS_OPTIONS, null);
+	}
+
+	// PACKAGE DIAGRAM CHANGE REQUEST
+	public JMenuItem createGeneratePackageDiagram() {
+		return createJMenuItem(false, GENERATE_PACKAGE_DIAGRAM, null);
 	}
 
 	public JMenuItem createSave() {
@@ -260,6 +279,47 @@ public class MenuFactorySwing extends MenuFactory {
 			alignMenu.add(createJMenuItem(false, direction, LAYER, direction));
 		}
 		return alignMenu;
+	}
+
+	public JMenu createRelateAround(GridElement e) {
+		log.info("Finding componenets around...");
+
+		Set<ComponentSwing> relevant = new HashSet<ComponentSwing>();
+		for (Component c : Main.getInstance().getDiagramHandler().getDrawPanel().getComponents()) {
+			try {
+
+				if (!(c instanceof com.baselet.gui.StartUpHelpText)) {
+					ComponentSwing cs = (ComponentSwing) c; // Casting because ComponentSwing extends JComponent which extends Container which extends Component
+
+					if (cs != e.getComponent() && cs.getBoundsRect().contains(e.getRectangle())) {
+						relevant.add(cs);
+					}
+				}
+			} catch (Exception ex) {
+				log.error(ex);
+			}
+		}
+		log.info("Found: " + relevant.size() + " Around element!");
+
+		JMenu menu = new JMenu(RELATE_AROUND);
+		for (ComponentSwing cs : relevant) {
+			log.info("Adding component with name: " + cs.getClass().getSimpleName());
+			ClassMenuItemPointer cmip = new ClassMenuItemPointer(cs);
+
+			final Map<String, GridElement> params = new HashMap<String, GridElement>();
+			params.put("parent", cs.getGridElement());
+			params.put("child", e);
+
+			cmip.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					doAction(RELATE_AROUND, params);
+				}
+			});
+			menu.add(cmip);
+		}
+
+		return menu;
 	}
 
 	private JMenuItem createJMenuItem(boolean grayWithoutDiagram, final String name, Object param) {

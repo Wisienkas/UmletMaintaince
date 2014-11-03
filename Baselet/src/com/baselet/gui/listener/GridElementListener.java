@@ -262,9 +262,9 @@ public class GridElementListener extends UniversalListener {
 	/**
 	 * Dragging entities must be a Macro, because undo should undo the full move (and not only a small part which would
 	 * happen with many short Move actions) and it must consider sticking relations at the dragging-start and later
-	 * @param mainElement 
-	 * @param directions 
-	 * @param b 
+	 * @param mainElement
+	 * @param directions
+	 * @param b
 	 */
 	private void dragEntity(boolean isShiftKeyDown, GridElement mainElement) {
 
@@ -323,10 +323,10 @@ public class GridElementListener extends UniversalListener {
 
 	/**
 	 * After the firstDragging is over, the vector of entities which should be dragged doesn't change (nothing starts sticking during dragging)
-	 * @param oldp 
-	 * @param elementsToMove 
-	 * @param directions 
-	 * @return 
+	 * @param oldp
+	 * @param elementsToMove
+	 * @param directions
+	 * @return
 	 */
 	private Vector<Command> continueDragging(int diffx, int diffy, Point oldp, List<GridElement> elementsToMove) {
 		boolean useSetLocation = elementsToMove.size() != 1; // if >1 elements are selected they will be moved

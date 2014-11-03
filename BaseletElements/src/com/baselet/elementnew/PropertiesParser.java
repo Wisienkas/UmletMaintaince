@@ -33,11 +33,12 @@ public class PropertiesParser {
 		PropertiesParserState tmpstate = new PropertiesParserState(settings, element.getRealSize()); // we use a tmpstate to parse global facets to see if autoresize is enabled
 		List<String> tmpPropTextWithoutGlobalFacets = parseGlobalFacets(propertiesText, tmpstate.getSettings().getGlobalFacets(), pseudoDrawer, tmpstate);
 
-		if (tmpstate.getElementStyle() == ElementStyleEnum.AUTORESIZE) { // only in case of autoresize element, we must proceed to calculate elementsize and resize it
+		if (tmpstate.getElementStyle() == ElementStyleEnum.AUTORESIZE || tmpstate.getAutoresize()) { // only in case of autoresize element, we must proceed to calculate elementsize and resize it
 			element.drawCommonContent(pseudoDrawer, tmpstate);
 			drawPropertiesWithoutGlobalFacets(tmpPropTextWithoutGlobalFacets, tmpstate, pseudoDrawer);
 			double textHeight = tmpstate.getyPos() - pseudoDrawer.textHeightMax(); // subtract last ypos step to avoid making element too high (because the print-text pos is always on the bottom)
 			double width = tmpstate.getCalculatedElementWidth();
+
 			element.handleAutoresize(new DimensionDouble(width, textHeight), tmpstate.gethAlign());
 		}
 	}

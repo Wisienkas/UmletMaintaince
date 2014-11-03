@@ -49,24 +49,24 @@ public class DiagramFileHandler {
 	private static JFileChooser saveFileChooser;
 
 	private String fileName;
-	private DiagramHandler handler;
+	private final DiagramHandler handler;
 	private File file;
 	private File exportFile;
-	private HashMap<String, FileFilter> filters = new HashMap<String, FileFilter>();
-	private HashMap<FileFilter, String> fileextensions = new HashMap<FileFilter, String>();
+	private final HashMap<String, FileFilter> filters = new HashMap<String, FileFilter>();
+	private final HashMap<FileFilter, String> fileextensions = new HashMap<FileFilter, String>();
 
-	private OwnFileFilter filterxml = new OwnFileFilter(Program.EXTENSION, Program.NAME + " diagram format");
-	private OwnFileFilter filterbmp = new OwnFileFilter("bmp", "BMP");
-	private OwnFileFilter filtereps = new OwnFileFilter("eps", "EPS");
-	private OwnFileFilter filtergif = new OwnFileFilter("gif", "GIF");
-	private OwnFileFilter filterjpg = new OwnFileFilter("jpg", "JPG");
-	private OwnFileFilter filterpdf = new OwnFileFilter("pdf", "PDF");
-	private OwnFileFilter filterpng = new OwnFileFilter("png", "PNG");
-	private OwnFileFilter filtersvg = new OwnFileFilter("svg", "SVG");
+	private final OwnFileFilter filterxml = new OwnFileFilter(Program.EXTENSION, Program.NAME + " diagram format");
+	private final OwnFileFilter filterbmp = new OwnFileFilter("bmp", "BMP");
+	private final OwnFileFilter filtereps = new OwnFileFilter("eps", "EPS");
+	private final OwnFileFilter filtergif = new OwnFileFilter("gif", "GIF");
+	private final OwnFileFilter filterjpg = new OwnFileFilter("jpg", "JPG");
+	private final OwnFileFilter filterpdf = new OwnFileFilter("pdf", "PDF");
+	private final OwnFileFilter filterpng = new OwnFileFilter("png", "PNG");
+	private final OwnFileFilter filtersvg = new OwnFileFilter("svg", "SVG");
 
-	private OwnFileFilter[] saveFileFilter = new OwnFileFilter[] { filterxml };
-	private OwnFileFilter[] exportFileFilter = new OwnFileFilter[] { filterbmp, filtereps, filtergif, filterjpg, filterpdf, filterpng, filtersvg };
-	private List<OwnFileFilter> allFileFilters = new ArrayList<OwnFileFilter>();
+	private final OwnFileFilter[] saveFileFilter = new OwnFileFilter[] { filterxml };
+	private final OwnFileFilter[] exportFileFilter = new OwnFileFilter[] { filterbmp, filtereps, filtergif, filterjpg, filterpdf, filterpng, filtersvg };
+	private final List<OwnFileFilter> allFileFilters = new ArrayList<OwnFileFilter>();
 
 	protected DiagramFileHandler(DiagramHandler diagramHandler, File file) {
 		handler = diagramHandler;
@@ -102,7 +102,17 @@ public class DiagramFileHandler {
 			}
 		}
 		else {
-			saveFileChooser = new JFileChooser(System.getProperty("user.dir"));
+			// When saving a new file, we need to either check if another file is open,
+			// if it is we use its directory, else we use the directory of the last opened file....
+			// only if it is the first time the program run we want it to open the save dialog in the program directory:
+			if (saveFileChooser != null) {
+				File lastSavedFile = saveFileChooser.getCurrentDirectory();
+				String path = lastSavedFile.getPath();
+				saveFileChooser = new JFileChooser(path);
+			}
+			else {
+				saveFileChooser = new JFileChooser(Constants.last_saved_path);
+			}
 		}
 
 		saveFileChooser.setAcceptAllFileFilterUsed(false); // We don't want "all files" as a choice
@@ -347,6 +357,9 @@ public class DiagramFileHandler {
 			}
 			fileName = selectedFileWithExt.getAbsolutePath();
 		}
+		if (fileName != null) {
+			Constants.last_saved_path = fileName;
+		}
 		return fileName;
 	}
 
@@ -387,8 +400,8 @@ public class DiagramFileHandler {
 	}
 
 	protected class OwnFileFilter extends FileFilter {
-		private String format;
-		private String description;
+		private final String format;
+		private final String description;
 
 		protected OwnFileFilter(String format, String description) {
 			this.format = format;

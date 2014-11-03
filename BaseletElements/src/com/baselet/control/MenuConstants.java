@@ -11,6 +11,7 @@ public class MenuConstants {
 	public static final String RECENT_FILES = "Recent files";
 	public static final String GENERATE_CLASS = "Generate Class Elements from Files or Directory...";
 	public static final String GENERATE_CLASS_OPTIONS = "Generate Class Element Options...";
+	public static final String GENERATE_PACKAGE_DIAGRAM = "Generate Package Diagram from Files or Directory...";
 	public static final String GENERATE_CODE = "Generate source code from diagram";
 	public static final String SAVE = "Save";
 	public static final String SAVE_AS = "Save as...";
@@ -57,6 +58,7 @@ public class MenuConstants {
 	public static final String LAYER = "Layer";
 	public static final String LAYER_UP = "to front (layer +1)";
 	public static final String LAYER_DOWN = "to back (layer -1)";
+	public static final String RELATE_AROUND = "Make parent";
 
 	// OTHERS
 	public static final String SEARCH = "Search";
