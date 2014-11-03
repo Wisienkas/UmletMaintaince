@@ -23,5 +23,8 @@
 	<classpathentry kind="lib" path="lib/rsyntaxtextarea-2.5.2.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.jdt.core.compiler.ecj-4.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/bcel-5.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.4.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
