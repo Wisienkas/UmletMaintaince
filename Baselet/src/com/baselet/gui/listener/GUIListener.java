@@ -19,6 +19,8 @@ public class GUIListener implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		System.out.println("Key pressed " + e.getKeyChar());
+
 		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
 			SharedConstants.stickingEnabled = false;
 		}
@@ -26,6 +28,9 @@ public class GUIListener implements KeyListener {
 		DiagramHandler handler = Main.getInstance().getDiagramHandler();
 
 		if (handler != null && !e.isAltDown() && !e.isAltGraphDown() /* && !e.isControlDown() && !e.isMetaDown() */) {
+
+			Collection<GridElement> selectedEntities = handler.getDrawPanel().getSelector().getSelectedElements();
+			int changeElementSize = 0;
 
 			/**
 			 * Enter: jumps directly into the diagram
@@ -40,13 +45,27 @@ public class GUIListener implements KeyListener {
 			// KeyChar check doesn't check non-numpad + on some keyboards, therefore we also need KeyEvent.VK_PLUS
 			else if (e.getKeyChar() == '+' || e.getKeyCode() == KeyEvent.VK_PLUS) {
 				int actualZoom = handler.getGridSize();
-				handler.setGridAndZoom(actualZoom + 1);
+
+				if (selectedEntities.isEmpty()) {
+					handler.setGridAndZoom(actualZoom + 1);
+				}
+				else {
+					changeElementSize = 3;
+				}
 			}
+
 			// KeyChar check doesn't check non-numpad - on some keyboards, therefore we also need KeyEvent.VK_MINUS
 			else if (e.getKeyChar() == '-' || e.getKeyCode() == KeyEvent.VK_MINUS) {
 				int actualZoom = handler.getGridSize();
-				handler.setGridAndZoom(actualZoom - 1);
+
+				if (selectedEntities.isEmpty()) {
+					handler.setGridAndZoom(actualZoom - 1);
+				}
+				else {
+					changeElementSize = -3;
+				}
 			}
+
 			/**
 			 * Cursors: Move diagram by a small distance
 			 */
@@ -69,10 +88,7 @@ public class GUIListener implements KeyListener {
 
 				if (diffx != 0 || diffy != 0) {
 					// Move only selected entities or all if no entity is selected
-					Collection<GridElement> entitiesToBeMoved = handler.getDrawPanel().getSelector().getSelectedElements();
-					if (entitiesToBeMoved.isEmpty()) {
-						entitiesToBeMoved = handler.getDrawPanel().getGridElements();
-					}
+					Collection<GridElement> entitiesToBeMoved = selectedEntities.isEmpty() ? handler.getDrawPanel().getGridElements() : selectedEntities;
 
 					Point opos = getOriginalPos(diffx, diffy, entitiesToBeMoved.iterator().next());
 					Vector<Command> ALL_MOVE_COMMANDS = GridElementListener.calculateFirstMoveCommands(diffx, diffy, opos, entitiesToBeMoved, e.isShiftDown(), true, handler, Collections.<Direction> emptySet());
@@ -80,8 +96,13 @@ public class GUIListener implements KeyListener {
 					Main.getInstance().getDiagramHandler().getDrawPanel().updatePanelAndScrollbars();
 				}
 			}
-		}
 
+			if (changeElementSize != 0) {
+				for (GridElement element : selectedEntities) {
+					element.changeSize(changeElementSize, changeElementSize);
+				}
+			}
+		}
 	}
 
 	private Point getOriginalPos(int diffx, int diffy, GridElement ge) {
