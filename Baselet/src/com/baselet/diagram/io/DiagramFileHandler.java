@@ -357,7 +357,9 @@ public class DiagramFileHandler {
 			}
 			fileName = selectedFileWithExt.getAbsolutePath();
 		}
-		Constants.last_saved_path = fileName;
+		if (fileName != null) {
+			Constants.last_saved_path = fileName;
+		}
 		return fileName;
 	}
 
