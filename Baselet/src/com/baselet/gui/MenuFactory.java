@@ -13,6 +13,7 @@ import static com.baselet.control.MenuConstants.EXIT;
 import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
+import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.GROUP;
 import static com.baselet.control.MenuConstants.LAYER;
 import static com.baselet.control.MenuConstants.LAYER_DOWN;
@@ -64,6 +65,7 @@ import com.baselet.diagram.command.Paste;
 import com.baselet.diagram.command.Relation;
 import com.baselet.diagram.command.RemoveElement;
 import com.baselet.diagram.io.ClassChooser;
+import com.baselet.diagram.io.SaveFileChooser;
 import com.baselet.element.GridElement;
 import com.baselet.elementnew.facet.common.BackgroundColorFacet;
 import com.baselet.elementnew.facet.common.ForegroundColorFacet;
@@ -71,6 +73,7 @@ import com.baselet.elementnew.facet.common.GroupFacet;
 import com.baselet.elementnew.facet.common.LayerFacet;
 import com.baselet.gui.standalone.StandaloneGUI;
 import com.umlet.custom.CustomElement;
+import com.umlet.language.ClassCodeConverter;
 import com.umlet.language.ClassDiagramConverter;
 
 public class MenuFactory {
@@ -96,6 +99,11 @@ public class MenuFactory {
 				}
 				else if (menuItem.equals(RECENT_FILES)) {
 					main.doOpen((String) param);
+				}
+				else if (menuItem.equals(GENERATE_CODE))
+				{
+					new ClassCodeConverter().createCodeDiagrams(SaveFileChooser.getFileToSave(),
+							diagramHandler.getDrawPanel().getGridElements());
 				}
 				else if (menuItem.equals(GENERATE_CLASS)) {
 					new ClassDiagramConverter().createClassDiagrams(ClassChooser.getFilesToOpen());
