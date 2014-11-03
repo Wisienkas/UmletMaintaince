@@ -28,6 +28,7 @@ public class PropertiesParserState {
 	private double rightBuffer;
 	private Dimension gridElementSize;
 	private ElementStyleEnum elementStyle;
+	private boolean autoResizeProp;
 	private final Map<Class<? extends Facet>, Object> facetResponse = new HashMap<Class<? extends Facet>, Object>();
 
 	public PropertiesParserState(Settings settings) {
@@ -191,5 +192,13 @@ public class PropertiesParserState {
 
 	public void setStickingPolygonGenerator(StickingPolygonGenerator stickingPolygonGenerator) {
 		this.stickingPolygonGenerator = stickingPolygonGenerator;
+	}
+
+	public boolean getAutoresize() {
+		return autoResizeProp;
+	}
+
+	public void setAutoresize(boolean value) {
+		autoResizeProp = value;
 	}
 }
