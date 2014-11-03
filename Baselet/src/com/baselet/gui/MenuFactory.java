@@ -14,6 +14,7 @@ import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
 import static com.baselet.control.MenuConstants.GENERATE_PACKAGE_DIAGRAM;
+import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.GROUP;
 import static com.baselet.control.MenuConstants.LAYER;
 import static com.baselet.control.MenuConstants.LAYER_DOWN;
@@ -31,6 +32,7 @@ import static com.baselet.control.MenuConstants.PROGRAM_HOMEPAGE;
 import static com.baselet.control.MenuConstants.RATE_PROGRAM;
 import static com.baselet.control.MenuConstants.RECENT_FILES;
 import static com.baselet.control.MenuConstants.REDO;
+import static com.baselet.control.MenuConstants.RELATE_AROUND;
 import static com.baselet.control.MenuConstants.SAVE;
 import static com.baselet.control.MenuConstants.SAVE_AS;
 import static com.baselet.control.MenuConstants.SELECT_ALL;
@@ -48,6 +50,8 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
+
 import com.baselet.control.BrowserLauncher;
 import com.baselet.control.Main;
 import com.baselet.control.SharedConstants.Program;
@@ -59,8 +63,10 @@ import com.baselet.diagram.command.ChangeElementSetting;
 import com.baselet.diagram.command.Copy;
 import com.baselet.diagram.command.Cut;
 import com.baselet.diagram.command.Paste;
+import com.baselet.diagram.command.Relation;
 import com.baselet.diagram.command.RemoveElement;
 import com.baselet.diagram.io.ClassChooser;
+import com.baselet.diagram.io.SaveFileChooser;
 import com.baselet.element.GridElement;
 import com.baselet.elementnew.facet.common.BackgroundColorFacet;
 import com.baselet.elementnew.facet.common.ForegroundColorFacet;
@@ -68,10 +74,13 @@ import com.baselet.elementnew.facet.common.GroupFacet;
 import com.baselet.elementnew.facet.common.LayerFacet;
 import com.baselet.gui.standalone.StandaloneGUI;
 import com.umlet.custom.CustomElement;
+import com.umlet.language.ClassCodeConverter;
 import com.umlet.language.ClassDiagramConverter;
 import com.umlet.language.PackageDiagramConverter;
 
 public class MenuFactory {
+
+	private static Logger log = Logger.getLogger(MenuFactory.class);
 
 	protected void doAction(final String menuItem, final Object param) {
 		// AB: Hopefully this will resolve threading issues and work for eclipse AND standalone
@@ -92,6 +101,11 @@ public class MenuFactory {
 				}
 				else if (menuItem.equals(RECENT_FILES)) {
 					main.doOpen((String) param);
+				}
+				else if (menuItem.equals(GENERATE_CODE))
+				{
+					new ClassCodeConverter().createCodeDiagrams(SaveFileChooser.getFileToSave(),
+							diagramHandler.getDrawPanel().getGridElements());
 				}
 				else if (menuItem.equals(GENERATE_CLASS)) {
 					new ClassDiagramConverter().createClassDiagrams(ClassChooser.getFilesToOpen());
@@ -231,6 +245,18 @@ public class MenuFactory {
 						valueMap.put(e, Integer.toString(e.getLayer() + change));
 					}
 					actualHandler.getController().executeCommand(new ChangeElementSetting(LayerFacet.KEY, valueMap));
+				}
+				else if (menuItem.equals(RELATE_AROUND) && actualHandler != null
+							&& actualSelector != null) {
+					if (param instanceof Map<?, ?>) {
+
+						@SuppressWarnings("unchecked")
+						Map<String, GridElement> args = (Map<String, GridElement>) param;
+						log.info("Combining Parent: " + args.get("parent").getId()
+								+ " and child: " + args.get("child").getId());
+						actualHandler.getController()
+								.executeCommand(new Relation(args.get("parent"), args.get("child")));
+					}
 				}
 			}
 		});

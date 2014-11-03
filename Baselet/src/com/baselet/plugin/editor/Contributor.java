@@ -140,6 +140,7 @@ public class Contributor extends EditorActionBarContributor {
 		menu.add(menuFactory.createGenerateOptions());
 		// PACKAGE DIAGRAM CHANGE DIAGRAM
 		menu.add(menuFactory.createGeneratePackageDiagram());
+		menu.add(menuFactory.createGenerateCode());
 
 		zoomMenu = menuFactory.createZoom();
 		menu.add(zoomMenu);

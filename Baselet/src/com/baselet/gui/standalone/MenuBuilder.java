@@ -50,6 +50,8 @@ public class MenuBuilder {
 		// PACKAGE DIAGRAM CHANGE REQUEST
 		fileMenu.add(menuFactory.createGeneratePackageDiagram());
 		fileMenu.addSeparator();
+		fileMenu.add(menuFactory.createGenerateCode());
+		fileMenu.addSeparator();
 		fileMenu.add(menuFactory.createSave());
 		fileMenu.add(menuFactory.createSaveAs());
 		fileMenu.add(menuFactory.createExportAs());

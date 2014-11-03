@@ -11,6 +11,7 @@ import static com.baselet.control.MenuConstants.EXPORT_AS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS;
 import static com.baselet.control.MenuConstants.GENERATE_CLASS_OPTIONS;
 import static com.baselet.control.MenuConstants.GENERATE_PACKAGE_DIAGRAM;
+import static com.baselet.control.MenuConstants.GENERATE_CODE;
 import static com.baselet.control.MenuConstants.MAIL_TO;
 import static com.baselet.control.MenuConstants.NEW_CE;
 import static com.baselet.control.MenuConstants.NEW_FROM_TEMPLATE;
@@ -214,6 +215,9 @@ public class MenuFactoryEclipse extends MenuFactory {
 	// PACKAGE DIAGRAM CHANGE REQUEST
 	public IAction createGeneratePackageDiagram() {
 		return createAction(GENERATE_PACKAGE_DIAGRAM, null);
+			
+	public IAction createGenerateCode() {
+		return createAction(GENERATE_CODE, null);
 	}
 
 	public IMenuManager createZoom() {
