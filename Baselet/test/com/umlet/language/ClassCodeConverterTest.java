@@ -63,6 +63,10 @@ public class ClassCodeConverterTest {
 		class3.setPanelAttributes("<<Interface>>\n" + classes[2] + "\n+method()\n-moring : String");
 		elements.add(class3);
 
+		com.umlet.element.Class class4 = new com.umlet.element.Class();
+		class4.setPanelAttributes("<<Abstract>>\n" + classes[3] + "\n+method()\n-moring : String");
+		elements.add(class4);
+
 		return elements;
 	}
 }
