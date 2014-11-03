@@ -17,9 +17,10 @@ import com.baselet.element.GridElement;
 
 public class GUIListener implements KeyListener {
 
+	private static final int SIZE_CHANGE_STEP = 3;
+
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("Key pressed " + e.getKeyChar());
 
 		if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
 			SharedConstants.stickingEnabled = false;
@@ -44,25 +45,23 @@ public class GUIListener implements KeyListener {
 			 */
 			// KeyChar check doesn't check non-numpad + on some keyboards, therefore we also need KeyEvent.VK_PLUS
 			else if (e.getKeyChar() == '+' || e.getKeyCode() == KeyEvent.VK_PLUS) {
-				int actualZoom = handler.getGridSize();
-
 				if (selectedEntities.isEmpty()) {
+					int actualZoom = handler.getGridSize();
 					handler.setGridAndZoom(actualZoom + 1);
 				}
 				else {
-					changeElementSize = 3;
+					changeElementSize = SIZE_CHANGE_STEP;
 				}
 			}
 
 			// KeyChar check doesn't check non-numpad - on some keyboards, therefore we also need KeyEvent.VK_MINUS
 			else if (e.getKeyChar() == '-' || e.getKeyCode() == KeyEvent.VK_MINUS) {
-				int actualZoom = handler.getGridSize();
-
 				if (selectedEntities.isEmpty()) {
+					int actualZoom = handler.getGridSize();
 					handler.setGridAndZoom(actualZoom - 1);
 				}
 				else {
-					changeElementSize = -3;
+					changeElementSize = -SIZE_CHANGE_STEP;
 				}
 			}
 
