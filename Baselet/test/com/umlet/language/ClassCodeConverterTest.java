@@ -15,14 +15,16 @@ public class ClassCodeConverterTest {
 			"classtest",
 			"com.umlet.test.unittest.class2",
 			"com.umlet.test.unittest.class3",
-			"com.umlet.test.unittest::class4"
+			"com.umlet.test.unittest::class4",
+			"com.umlet.test.unittest::class5"
 	};
 
 	String[] filenames = new String[] {
 			"classtest.java",
 			"com/umlet/test/unittest/class2.java",
 			"com/umlet/test/unittest/class3.java",
-			"com/umlet/test/unittest/class4.java"
+			"com/umlet/test/unittest/class4.java",
+			"com/umlet/test/unittest/class5.java"
 	};
 
 	@Test
@@ -64,8 +66,12 @@ public class ClassCodeConverterTest {
 		elements.add(class3);
 
 		com.umlet.element.Class class4 = new com.umlet.element.Class();
-		class4.setPanelAttributes("<<Abstract>>\n" + classes[3] + "\n+method()\n-moring : String");
+		class4.setPanelAttributes("/" + classes[3] + "/\n+method()\n-moring : String");
 		elements.add(class4);
+
+		com.umlet.element.Class class5 = new com.umlet.element.Class();
+		class5.setPanelAttributes("//hej med dig\n/" + classes[4] + "/\n+method()\n-moring : String");
+		elements.add(class5);
 
 		return elements;
 	}

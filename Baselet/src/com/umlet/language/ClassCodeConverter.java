@@ -30,6 +30,9 @@ public class ClassCodeConverter {
 						continue;
 					}
 
+					if (attribute.startsWith("/") && attribute.endsWith("/")) {
+						attribute = attribute.substring(1, attribute.length() - 1);
+					}
 					attribute = attribute.replace("::", File.separator);
 					attribute = attribute.replace(":", File.separator);
 					attribute = attribute.replace(".", File.separator);
