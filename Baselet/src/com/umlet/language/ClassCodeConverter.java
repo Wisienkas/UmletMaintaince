@@ -10,6 +10,10 @@ import com.baselet.element.GridElement;
 public class ClassCodeConverter {
 
 	public void createCodeDiagrams(String path, List<GridElement> elements) {
+		if (path == null || elements == null) {
+			return;
+		}
+
 		List<String> files = new ArrayList<String>();
 
 		for (GridElement e : elements)
@@ -26,6 +30,9 @@ public class ClassCodeConverter {
 						continue;
 					}
 
+					if (attribute.startsWith("/") && attribute.endsWith("/")) {
+						attribute = attribute.substring(1, attribute.length() - 1);
+					}
 					attribute = attribute.replace("::", File.separator);
 					attribute = attribute.replace(":", File.separator);
 					attribute = attribute.replace(".", File.separator);
