@@ -268,6 +268,8 @@ public class SequenceDiagram extends OldGridElement {
 		int curLevel = 0;
 		im = new InteractionManagement(levelNum);
 		String boxStrings = "";
+		// the max length of all arrow messages:
+		double maxMessageWidth = 0;
 		for (int i = 1; i < lines.size(); i++) {
 			String methodName = "";
 			if (lines.elementAt(i).matches("\\A\\s*\\z")) {
@@ -403,6 +405,20 @@ public class SequenceDiagram extends OldGridElement {
 
 				if (methodName.isEmpty()) {
 					methodName = m.group(9);
+					// Calculating max length of arrow messages:
+					if (destObj != null && srcObj != null && m.group(9) != null) {
+						TextLayout layout = new TextLayout(methodName, Main.getHandlerForElement(this).getFontHandler().getFont(), g2.getFontRenderContext());
+						if (destObj == srcObj) { // when call is to same column:
+							maxMessageWidth = Math.max(layout.getBounds().getWidth() - rectDistance / 2, maxMessageWidth);
+						}
+						else {
+							maxMessageWidth = Math.max(layout.getBounds().getWidth() / Math.abs(srcObj - destObj) - rectDistance / 2, maxMessageWidth);
+						}
+					}
+					else if (m.group(9) != null) {
+						TextLayout layout = new TextLayout(methodName, Main.getHandlerForElement(this).getFontHandler().getFont(), g2.getFontRenderContext());
+						maxMessageWidth = Math.max(layout.getBounds().getWidth() - rectDistance / 2, maxMessageWidth);
+					}
 				}
 
 				// LME: removed (in V6) since not necessary
@@ -434,12 +450,20 @@ public class SequenceDiagram extends OldGridElement {
 			maxWidth = Math.max(layout.getBounds().getWidth(), maxWidth);
 			maxHeight = Math.max(layout.getBounds().getHeight(), maxHeight);
 		}
-
-		rectWidth = (int) Math.floor(maxWidth + 1) + 2 * (int) Main.getHandlerForElement(this).getFontHandler().getDistanceBetweenTexts() + (int) Main.getHandlerForElement(this).getFontHandler().getFontSize();
+		// if the max width of a arrow message is greater
+		// than the max rect size we calculate size after max arrow size:
+		if (maxWidth > maxMessageWidth) {
+			rectWidth = (int) Math.floor(maxWidth + 1) + 2 * (int) Main.getHandlerForElement(this).getFontHandler().getDistanceBetweenTexts() + (int) Main.getHandlerForElement(this).getFontHandler().getFontSize();
+		}
+		else {
+			rectWidth = (int) Math.floor(maxMessageWidth + 1) + 2 * (int) Main.getHandlerForElement(this).getFontHandler().getDistanceBetweenTexts() + (int) Main.getHandlerForElement(this).getFontHandler().getFontSize();
+		}
 		rectHeight = (int) Math.floor(maxHeight + 1) + (int) Main.getHandlerForElement(this).getFontHandler().getDistanceBetweenTexts() + (int) Main.getHandlerForElement(this).getFontHandler().getFontSize();
 
 		// draw the first line of the sequence diagram
+		// ypos is the y position of each rectangle:
 		int ypos = borderDistance + yOffsetforTitle;
+		// xpos is the x position of each rectangle:
 		int xpos = borderDistance;
 		for (int i = 0; i < numObjects; i++) {
 			boolean underline = false;
