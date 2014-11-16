@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib/jackson-core-2.4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/diffutils-1.2.1.jar" sourcepath="lib/diffutils-1.2.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

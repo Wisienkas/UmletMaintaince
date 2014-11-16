@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 
 import com.baselet.control.Constants;
 import com.baselet.control.Main;
-import com.baselet.control.Notifier;
 import com.baselet.control.Path;
 import com.baselet.control.SharedConstants.Program;
 import com.baselet.diagram.DiagramHandler;
@@ -47,7 +46,9 @@ public class DiagramFileHandler {
 	private static final Logger log = Logger.getLogger(DiagramFileHandler.class);
 
 	private static JFileChooser saveFileChooser;
+	private FileChangeListener fileListener;
 
+	protected boolean justSaved;
 	private String fileName;
 	private final DiagramHandler handler;
 	private File file;
@@ -68,10 +69,16 @@ public class DiagramFileHandler {
 	private final OwnFileFilter[] exportFileFilter = new OwnFileFilter[] { filterbmp, filtereps, filtergif, filterjpg, filterpdf, filterpng, filtersvg };
 	private final List<OwnFileFilter> allFileFilters = new ArrayList<OwnFileFilter>();
 
+	boolean isSaving;
+
 	protected DiagramFileHandler(DiagramHandler diagramHandler, File file) {
 		handler = diagramHandler;
 		if (file != null) {
 			fileName = file.getName();
+			if (!file.getAbsolutePath().contains("palettes")) {
+				fileListener = new FileChangeListener(diagramHandler, this, file);
+				fileListener.start();
+			}
 		}
 		else {
 			fileName = "new." + Program.EXTENSION;
@@ -334,7 +341,11 @@ public class DiagramFileHandler {
 			handler.setChanged(false);
 			Constants.recentlyUsedFilesList.add(saveToFile.getAbsolutePath());
 		}
-		Notifier.getInstance().showNotification(saveToFile.getAbsolutePath() + " saved");
+
+		fileListener.originalFileContent = tmp;
+		fileListener.timeStamp = saveToFile.lastModified();
+
+		// Notifier.getInstance().showNotification(saveToFile.getAbsolutePath() + " saved");
 	}
 
 	private String chooseFileName(boolean ownXmlFormat, FileFilter filefilter) {
@@ -378,7 +389,7 @@ public class DiagramFileHandler {
 
 	/**
 	 * Updates the available FileFilter to "only uxf/pxf" or "all but uxf/pxf"
-	 * 
+	 *
 	 * @param ownXmlFormat
 	 *            If this param is set, only uxf/pxf is visible, otherwise all but uxf/pxf is visible
 	 */
