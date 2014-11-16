@@ -230,16 +230,18 @@ public class PlotGrid extends NewGridElement {
 		for (int row = 0; row < matrix.rows(); row++) {
 			for (int col = 0; col < matrix.row(row).size(); col++) {
 				List<AbstractPlot> oneCell = matrix.cell(row, col);
-				for (AbstractPlot onePlot : oneCell)
-				{
-					if (onePlot != null) {
-						if (col != onePlot.getXPosition()) {
-							log.error("Plot contains wrong coordinates: " + col + " != " + onePlot.getXPosition());
+				if(oneCell != null){
+					for (AbstractPlot onePlot : oneCell)
+					{
+						if (onePlot != null) {
+							if (col != onePlot.getXPosition()) {
+								log.error("Plot contains wrong coordinates: " + col + " != " + onePlot.getXPosition());
+							}
+							if (row != onePlot.getYPosition()) {
+								log.error("Plot contains wrong coordinates: " + row + " != " + onePlot.getYPosition());
+							}
+							onePlot.plot(matrix.cols(), matrix.rows());
 						}
-						if (row != onePlot.getYPosition()) {
-							log.error("Plot contains wrong coordinates: " + row + " != " + onePlot.getYPosition());
-						}
-						onePlot.plot(matrix.cols(), matrix.rows());
 					}
 				}
 			}

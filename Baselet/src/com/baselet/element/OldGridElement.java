@@ -601,4 +601,12 @@ public abstract class OldGridElement extends JComponent implements GridElement, 
 		undoStack.add(undoInfoA.merge(undoInfoB));
 	}
 
+	@Override
+	public void setRelateSettings(String json){
+	}
+	
+	@Override
+	public String getRelateSettigns(){
+		return "";
+	}
 }
