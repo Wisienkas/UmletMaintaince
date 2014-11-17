@@ -91,7 +91,7 @@ public class DiagramHandler {
 		if (!(this instanceof PaletteHandler)) {
 			drawpanel.setComponentPopupMenu(new DiagramPopupMenu(extendedPopupMenu));
 		}
-		relationKeeper = new RelateManager(drawpanel);
+		relationKeeper = new RelateManager(drawpanel.getGridElements());
 	}
 
 	public void setEnabled(boolean en) {

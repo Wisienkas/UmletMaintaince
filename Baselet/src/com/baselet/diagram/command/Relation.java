@@ -37,6 +37,12 @@ public class Relation extends Command {
 	@Override
 	public void undo(DiagramHandler handler) {
 		super.undo(handler);
+		handler.getRelationManager().removeChild(child, parent);
+		oldParent.ifPresent(old -> handler.getRelationManager().addPair(old, this.child));
+		String childJson = handler.getRelationManager().getJSON(child);
+		String parentJson = handler.getRelationManager().getJSON(parent);
+		log.info("Child: " + childJson);
+		log.info("Parent: " + parentJson);
 	}
 
 }

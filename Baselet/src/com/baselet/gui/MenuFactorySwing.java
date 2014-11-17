@@ -285,7 +285,6 @@ public class MenuFactorySwing extends MenuFactory {
 	}
 
 	public JMenu createRelateAround(GridElement el, DiagramHandler handler) {
-		log.info("Finding componenets around...");
 
 		Set<ComponentSwing> relevant = new HashSet<ComponentSwing>();
 		
@@ -302,27 +301,10 @@ public class MenuFactorySwing extends MenuFactory {
 				log.error(ex);
 			}
 		}
-		log.info("Found: " + relevant.size() + " Around element!");
 
 		JMenu menu = new JMenu(RELATE_AROUND);
 		for (ComponentSwing cs : relevant) {
-			log.info("Adding component with name: " + cs.getClass().getSimpleName());
-			ClassMenuItemPointer cmip = new ClassMenuItemPointer(cs);
-
-			cmip.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					SwingUtilities.invokeLater(
-						() -> {
-							log.info("Combining Parent: " + cs.getGridElement().getId()
-									+ " and child: " + el.getId());
-							handler.getController()
-									.executeCommand(new Relation(cs.getGridElement(), el));
-						}
-					);
-				}
-			});
-			menu.add(cmip);
+			menu.add(new ClassMenuItemPointer(cs.getGridElement(), el, handler));
 		}
 
 		return menu;

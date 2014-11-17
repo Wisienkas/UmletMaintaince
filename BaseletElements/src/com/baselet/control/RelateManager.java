@@ -9,15 +9,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import org.apache.log4j.Logger;
 
-import com.baselet.diagram.DiagramHandler;
-import com.baselet.diagram.DrawPanel;
 import com.baselet.element.GridElement;
-import com.baselet.elementnew.facet.common.HierarchyRelation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,33 +22,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RelateManager {
 
 	private final Logger log = Logger.getLogger(RelateManager.class);
-	
-	private HashMap<GridElement, Long> elementToIdMap; // To Find ID using element
-	private HashMap<Long, GridElement> idToElementMap; // To find Element using ID
-	private HashMap<Long, Relate> relationMap;
-	private AtomicLong idGenerator;
-	private ObjectMapper ob;
 
-	public RelateManager(DrawPanel drawPanel) {
+	private final HashMap<GridElement, Long> elementToIdMap; // To Find ID using element
+	private final HashMap<Long, GridElement> idToElementMap; // To find Element using ID
+	private final HashMap<Long, Relate> relationMap;
+	private final AtomicLong idGenerator;
+	private final ObjectMapper ob;
+
+	public RelateManager(List<GridElement> collectionOfElements) {
 		elementToIdMap = new HashMap<GridElement, Long>();
 		idToElementMap = new HashMap<Long, GridElement>();
 		relationMap = new HashMap<Long, Relate>();
 		ob = new ObjectMapper();
-		addExistingElements(drawPanel);
+		addExistingElements(collectionOfElements);
 		idGenerator = new AtomicLong();
 	}
 
-	private void addExistingElements(DrawPanel drawPanel) {
-		log.info("Counting:_" + drawPanel.getGridElements().size() + " Elements!");
-		drawPanel.getGridElements()
-			.stream()
-			.forEach(gridElement -> {
-				addByJson(gridElement);
-			});
+	private void addExistingElements(List<GridElement> collectionOfElements) {
+		collectionOfElements.stream()
+				.forEach(gridElement -> {
+					addByJson(gridElement);
+				});
 	}
 
 	private void addByJson(GridElement element) {
-		if(!element.getRelateSettings().isEmpty()){
+		if (!element.getRelateSettings().isEmpty()) {
 			try {
 				Relate relate = ob.readValue(element.getRelateSettings(), Relate.class);
 				getElementToId().put(element, relate.getId());
@@ -78,7 +71,7 @@ public class RelateManager {
 		removeParent(child);
 		addParent(child, parent);
 	}
-	
+
 	private void addParent(GridElement child, GridElement parent) {
 		getRelationByElement(child).setOptParent(Optional.ofNullable(getIdByElement(parent)));
 		getRelationByElement(parent).addChild(getIdByElement(child));
@@ -87,11 +80,11 @@ public class RelateManager {
 	private void removeParent(GridElement child) {
 		removeParent(Optional.ofNullable(getRelationByElement(child)));
 	}
-	
+
 	private void removeParent(Optional<Relate> childRelate) {
 		childRelate.ifPresent(child -> {
 			child.getOptParent().ifPresent(parent -> {
-				if(getRelationMap().containsKey(child.getOptParent().get())) {
+				if (getRelationMap().containsKey(child.getOptParent().get())) {
 					getRelationMap().get(child.getOptParent().get()).removeChild(child.getId());
 				}
 			});
@@ -111,7 +104,7 @@ public class RelateManager {
 		return Optional.ofNullable(idToElementMap.get(id));
 	}
 
-	/** 
+	/**
 	 * Return the ID associated with the element
 	 * If the element have no ID, an ID is being made for that element
 	 * @param element
@@ -122,11 +115,11 @@ public class RelateManager {
 	}
 
 	private Long createRelation(GridElement element) {
-		if(exists(element)){
+		if (exists(element)) {
 			return getElementToId().get(element);
-		} else {
+		}
+		else {
 			Long id = generateId();
-			log.info("Found id: " + id + "\tFor: " + element.getPanelAttributes());
 			getElementToId().putIfAbsent(element, id);
 			getIdToElement().putIfAbsent(id, element);
 			getRelationMap().putIfAbsent(id, new Relate(id));
@@ -139,7 +132,9 @@ public class RelateManager {
 	}
 
 	private Long generateId() {
-		while(getIdToElement().containsKey(getGenerator().incrementAndGet()));
+		while (getIdToElement().containsKey(getGenerator().incrementAndGet())) {
+			;
+		}
 		return getGenerator().get();
 	}
 
@@ -162,15 +157,15 @@ public class RelateManager {
 					removeParent(getElementById(c_id).get());
 				});
 				// Of precaution
-				rel.getChildren().clear();
-				return rel;
-			});
+					rel.getChildren().clear();
+					return rel;
+				});
 			return i;
 		});
 	}
 
 	public boolean hasChild(GridElement parent) {
-//		getRelationByElement(parent)
+		// getRelationByElement(parent)
 		return elementToIdMap.containsKey(parent) ? hasChild(elementToIdMap.get(parent)) : false;
 	}
 
@@ -208,13 +203,9 @@ public class RelateManager {
 
 	@SuppressWarnings("unchecked")
 	public Optional<GridElement> getParent(GridElement child) {
-		Optional result = Optional.empty();
-		getRelationByElement(child).getOptParent().ifPresent(parent -> {
-			result = Optional.ofNullable(getElementById(parent));
-		});
-		
-		return (Optional<GridElement>) (elementToIdMap.containsKey(child) ?
-				Optional.ofNullable(getParent(elementToIdMap.get(child))) : Optional.empty());
+		Optional<Long> parentAsId = getRelationByElement(child).getOptParent();
+
+		return parentAsId.isPresent() ? getElementById(parentAsId.get()) : Optional.empty();
 	}
 
 	public Optional<Long> getParent(Long childId) {
@@ -232,7 +223,7 @@ public class RelateManager {
 		Map<GridElement, String> result = new HashMap<GridElement, String>();
 
 		try {
-			result.put(child, ob.writeValueAsString(getRelationByElement(child)));			
+			result.put(child, ob.writeValueAsString(getRelationByElement(child)));
 			result.put(parent, ob.writeValueAsString(getRelationByElement(parent)));
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -264,17 +255,17 @@ public class RelateManager {
 		}
 
 		public void addChild(Long childId) {
-			this.children.add(childId);
+			children.add(childId);
 		}
-		
-		public void removeChild(Long childId){
-			this.children.remove(childId);
+
+		public void removeChild(Long childId) {
+			children.remove(childId);
 		}
 
 		public Relate(Long id) {
 			this.id = id;
-			this.parent = null;
-			this.children = new HashSet<>();
+			parent = null;
+			children = new HashSet<>();
 		}
 
 		public Long id;
@@ -304,20 +295,19 @@ public class RelateManager {
 		public void setOptParent(Optional<Long> parent) {
 			this.parent = parent.orElse(null);
 		}
-		
+
 		public void setParent(Long parent) {
 			this.parent = parent;
 		}
-		
+
 		public Long getParent() {
-			return this.parent;
+			return parent;
 		}
 
 		public Set<Long> children = new HashSet<Long>();
-		
-		
+
 		public Long parent;
-		
+
 	}
 
 	public boolean containsElement(GridElement element) {
