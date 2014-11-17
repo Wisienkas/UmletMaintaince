@@ -17,8 +17,10 @@ public class SequenceDiagramTest {
 		SequenceDiagram sq = new SequenceDiagram();
 
 		String testString1 = "title:test \n_alpha:A~id1_|_beta:B~id2_\nid1->>id2:id1,id2";
-		String testString2 = "title:test \n_alpha:A~id1_|_beta:B~id2_\nid1->>id2:id1,id2: test";
-		String testString3 = "title:test \n_alpha:A~id1_|_beta:B~id2_\nid1->>id2:id1,id2: testtesttesttesttesttettesttesttesttesttesttet";
+		String testString2 = "title:test \n_alpha:A~id1_|_beta:B~id2_\nid1->>id2:id1,id2: testtesttest";
+		String testString3 = "title:test \n_alpha:A~id1_|_beta:B~id2_\nid1->>id2:id1,id2: testtesttesttest";
+		String testString4 = "title:test \n_alpha:A~id1_|_beta:B~id2_|_delta:d~id3_\nid1->>id3:id1,id3: testtesttesttesttesttest";
+		String testString5 = "title:test \n_alpha:A~id1_|_beta:B~id2_|_delta:d~id3_\nid1->>id3:id1,id3: testtesttesttesttesttesttest";
 
 		Main.setHandlerForElement(sq, new DiagramHandler(null));
 		BufferedImage buffer = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB_PRE);
@@ -45,7 +47,21 @@ public class SequenceDiagramTest {
 
 		Assert.assertTrue("Layout has not changed!", startSize < changedSize);
 
-		// removing the message should set the size back to the initial size defined by the rectangles:
+		// testing that messages going over a column has more space
+		// and that the layout takes that into account:
+		sq.setPanelAttributes(testString4);
+		sq.paintEntity(g2);
+		changedSize = sq.rectWidth;
+		Assert.assertTrue("Layout has changed!", startSize == changedSize);
+
+		// testing that messages going over a column has more space
+		// and that the layout takes that into account and resizes the component:
+		sq.setPanelAttributes(testString5);
+		sq.paintEntity(g2);
+		changedSize = sq.rectWidth;
+		Assert.assertTrue("Layout has not changed!", startSize < changedSize);
+
+		// testing that removing a message changes the layout back to the rectangle defined lay
 		sq.setPanelAttributes(testString1);
 		sq.paintEntity(g2);
 		changedSize = sq.rectWidth;
