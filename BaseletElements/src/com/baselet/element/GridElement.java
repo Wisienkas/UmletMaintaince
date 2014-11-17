@@ -86,5 +86,5 @@ public interface GridElement extends HasPanelAttributes {
 	
 	void setRelateSettings(String json);
 	
-	String getRelateSettigns();
+	String getRelateSettings();
 }

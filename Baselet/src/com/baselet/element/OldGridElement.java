@@ -606,7 +606,7 @@ public abstract class OldGridElement extends JComponent implements GridElement, 
 	}
 	
 	@Override
-	public String getRelateSettigns(){
+	public String getRelateSettings(){
 		return "";
 	}
 }

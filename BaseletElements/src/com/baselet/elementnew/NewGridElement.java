@@ -500,7 +500,7 @@ public abstract class NewGridElement implements GridElement {
 	}
 	
 	@Override
-	public String getRelateSettigns(){
+	public String getRelateSettings(){
 		return relateSettings == null ? "" : relateSettings;
 	}
 }

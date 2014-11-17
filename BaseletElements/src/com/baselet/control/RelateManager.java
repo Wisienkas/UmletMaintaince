@@ -32,21 +32,41 @@ public class RelateManager {
 	private HashMap<Long, GridElement> idToElementMap; // To find Element using ID
 	private HashMap<Long, Relate> relationMap;
 	private AtomicLong idGenerator;
+	private ObjectMapper ob;
 
 	public RelateManager(DrawPanel drawPanel) {
 		elementToIdMap = new HashMap<GridElement, Long>();
 		idToElementMap = new HashMap<Long, GridElement>();
 		relationMap = new HashMap<Long, Relate>();
-		idGenerator = new AtomicLong();
+		ob = new ObjectMapper();
 		addExistingElements(drawPanel);
+		idGenerator = new AtomicLong();
 	}
 
 	private void addExistingElements(DrawPanel drawPanel) {
-//		drawPanel.getGridElements()
-//			.stream()
-//			.forEach(gridElement -> {
-//				gridElement.getAdditionalAttributes()
-//			});
+		log.info("Counting:_" + drawPanel.getGridElements().size() + " Elements!");
+		drawPanel.getGridElements()
+			.stream()
+			.forEach(gridElement -> {
+				addByJson(gridElement);
+			});
+	}
+
+	private void addByJson(GridElement element) {
+		if(!element.getRelateSettings().isEmpty()){
+			try {
+				Relate relate = ob.readValue(element.getRelateSettings(), Relate.class);
+				getElementToId().put(element, relate.getId());
+				getIdToElement().put(relate.id, element);
+				getRelationMap().put(relate.getId(), relate);
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void addPair(GridElement parent, GridElement child) {
@@ -116,34 +136,6 @@ public class RelateManager {
 
 	private boolean exists(GridElement element) {
 		return getElementToId().containsKey(element);
-	}
-
-	public boolean trySetId(GridElement element, Long id) {
-		boolean taken = getIdToElement().computeIfPresent(id, (i , e) -> e) == element;
-		if(!taken) addIdToElement(element, id);
-		return !taken;
-	}
-
-	private void addIdToElement(GridElement element, Long id) {
-		getIdToElement().putIfAbsent(id, element);
-		getElementToId().putIfAbsent(element, id);
-		
-
-		element.getPanelAttributesAsList()
-			.stream()
-			.filter(line -> line.startsWith(HierarchyRelation.KEY + "="))
-			.findFirst()
-			.ifPresent(attr -> {
-				try {
-					getRelationMap().put(id, 
-							new ObjectMapper()
-								.readValue(attr.substring(attr.lastIndexOf(HierarchyRelation.KEY + "="))
-										, Relate.class));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
-		getRelationMap().putIfAbsent(id, new Relate(id));
 	}
 
 	private Long generateId() {
@@ -234,7 +226,6 @@ public class RelateManager {
 	 */
 	public Map<GridElement, String> getJSONForChange(GridElement child, GridElement parent) {
 		Map<GridElement, String> result = new HashMap<GridElement, String>();
-		ObjectMapper ob = new ObjectMapper();
 
 		try {
 			result.put(child, ob.writeValueAsString(getRelationByElement(child)));			
@@ -247,7 +238,6 @@ public class RelateManager {
 	}
 
 	public String getJSON(GridElement element) {
-		ObjectMapper ob = new ObjectMapper();
 		try {
 			return ob.writeValueAsString(getRelationByElement(element));
 		} catch (JsonProcessingException e) {

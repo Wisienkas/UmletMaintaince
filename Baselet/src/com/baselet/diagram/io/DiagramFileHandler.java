@@ -153,6 +153,7 @@ public class DiagramFileHandler {
 		String sElType = c.getName();
 		String sElPanelAttributes = e.getPanelAttributes();
 		String sElAdditionalAttributes = e.getAdditionalAttributes();
+		String sElRelateAttributes = e.getRelateSettings();
 
 		Element el = doc.createElement("element");
 
@@ -193,6 +194,10 @@ public class DiagramFileHandler {
 		Element elAA = doc.createElement("additional_attributes");
 		elAA.appendChild(doc.createTextNode(sElAdditionalAttributes));
 		el.appendChild(elAA);
+		
+		Element elRA = doc.createElement("relate_settings");
+		elRA.appendChild(doc.createTextNode(sElRelateAttributes));
+		el.appendChild(elRA);
 
 		if (e instanceof CustomElement) {
 			Element elCO = doc.createElement("custom_code");

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.net.TelnetAppender;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -40,6 +41,7 @@ public class InputHandler extends DefaultHandler {
 	private String code;
 	private String panel_attributes;
 	private String additional_attributes;
+	private String Relate_attributes;
 
 	private Integer currentGroup;
 	private DiagramHandler handler;
@@ -63,6 +65,7 @@ public class InputHandler extends DefaultHandler {
 		if (qName.equals("element")) {
 			panel_attributes = "";
 			additional_attributes = "";
+			Relate_attributes = "";
 			code = null;
 		}
 		if (qName.equals("group")) { // TODO remove group-handling in InputHandler. Until UMLet v13, groups used own element-tags in XML. This has changed to the property group=x, so this handling is only for backwards compatibility
@@ -152,6 +155,9 @@ public class InputHandler extends DefaultHandler {
 		}
 		else if (elementname.equals("custom_code")) {
 			code = elementtext;
+		}
+		else if (elementname.equals("relate_settings")) {
+			Relate_attributes = elementtext;
 		}
 	}
 

@@ -70,7 +70,6 @@ public class DiagramHandler {
 		drawpanel = new DrawPanel(this);
 		controller = new Controller(this);
 		fontHandler = new FontHandler(this);
-		relationKeeper = new RelateManager(drawpanel);
 		fileHandler = DiagramFileHandler.createInstance(this, diagram);
 		if (!nolistener) {
 			setListener(new DiagramListener(this));
@@ -92,6 +91,7 @@ public class DiagramHandler {
 		if (!(this instanceof PaletteHandler)) {
 			drawpanel.setComponentPopupMenu(new DiagramPopupMenu(extendedPopupMenu));
 		}
+		relationKeeper = new RelateManager(drawpanel);
 	}
 
 	public void setEnabled(boolean en) {
