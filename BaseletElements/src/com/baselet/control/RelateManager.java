@@ -208,7 +208,11 @@ public class RelateManager {
 
 	@SuppressWarnings("unchecked")
 	public Optional<GridElement> getParent(GridElement child) {
-		// TODO 
+		Optional result = Optional.empty();
+		getRelationByElement(child).getOptParent().ifPresent(parent -> {
+			result = Optional.ofNullable(getElementById(parent));
+		});
+		
 		return (Optional<GridElement>) (elementToIdMap.containsKey(child) ?
 				Optional.ofNullable(getParent(elementToIdMap.get(child))) : Optional.empty());
 	}
@@ -314,5 +318,9 @@ public class RelateManager {
 		
 		public Long parent;
 		
+	}
+
+	public boolean containsElement(GridElement element) {
+		return getElementToId().containsKey(element);
 	}
 }

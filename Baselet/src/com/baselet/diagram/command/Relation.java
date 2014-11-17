@@ -1,12 +1,9 @@
 package com.baselet.diagram.command;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.apache.log4j.Logger;
 
-import com.baselet.control.RelateManager;
 import com.baselet.diagram.DiagramHandler;
 import com.baselet.element.GridElement;
 
@@ -35,7 +32,6 @@ public class Relation extends Command {
 		parent.setRelateSettings(parentJson);
 		log.info("Child: " + childJson);
 		log.info("Parent: " + parentJson);
-
 	}
 
 	@Override
