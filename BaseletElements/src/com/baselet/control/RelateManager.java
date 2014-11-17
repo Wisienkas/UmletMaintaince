@@ -139,7 +139,7 @@ public class RelateManager {
 	}
 
 	private Long generateId() {
-		while(getIdToElement().containsKey(getGenerator().getAndIncrement()));
+		while(getIdToElement().containsKey(getGenerator().incrementAndGet()));
 		return getGenerator().get();
 	}
 
