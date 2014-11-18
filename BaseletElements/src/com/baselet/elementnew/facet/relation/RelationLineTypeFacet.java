@@ -2,6 +2,7 @@ package com.baselet.elementnew.facet.relation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -24,9 +25,9 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 
 	private static class Match<T extends RegexValueHolder> {
 		private final String text;
-		private final T type;
+		private final Optional<T> type;
 
-		public Match(String matchedText, T matchedObject) {
+		public Match(String matchedText, Optional<T> matchedObject) {
 			super();
 			this.text = matchedText;
 			this.type = matchedObject;
@@ -93,11 +94,11 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 	}
 
 	public static void drawDefaultLineAndArrows(DrawHandler drawer, RelationPointHandler relationPoints) {
-		drawLineAndArrows(drawer, relationPoints, new Match<LineType>("", LineType.SOLID), new Match<ArrowEnd>("", null), new Match<ArrowEnd>("", null));
+		drawLineAndArrows(drawer, relationPoints, new Match<LineType>("", Optional.ofNullable(LineType.SOLID)), new Match<ArrowEnd>("", null), new Match<ArrowEnd>("", null));
 	}
 
 	private static void drawLineAndArrows(DrawHandler drawer, RelationPointHandler relationPoints, Match<LineType> lineType, Match<ArrowEnd> leftArrow, Match<ArrowEnd> rightArrow) {
-		drawLineBetweenPoints(drawer, relationPoints, lineType.type);
+		drawLineBetweenPoints(drawer, relationPoints, lineType.type.orElse(null));
 		drawArrowEnds(drawer, relationPoints, leftArrow, rightArrow);
 		relationPoints.resizeRectAndReposPoints(); // line description and relation-endings can change the relation size, therefore recalc it now
 	}
@@ -112,9 +113,7 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 
 	private static void print(DrawHandler drawer, ResizableObject relationPoints, Match<ArrowEnd> match, Line line, boolean drawOnLineStart) {
 		relationPoints.resetPointMinSize(((PointDoubleIndexed) line.getPoint(drawOnLineStart)).getIndex());
-		if (match.type != null) {
-			match.type.print(drawer, line, drawOnLineStart, match.text, relationPoints);
-		}
+		match.type.ifPresent(t -> t.print(drawer, line, drawOnLineStart, match.text, relationPoints));
 	}
 
 	private static void drawLineBetweenPoints(DrawHandler drawer, RelationPointHandler relationPoints, LineType lineType) {
@@ -131,19 +130,14 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 			if (!remainingValue.equals(newRemainingValue)) {
 				String removedPart = remainingValue.substring(0, remainingValue.length() - newRemainingValue.length());
 				remainingValue = newRemainingValue;
-				return new Match<T>(removedPart, valueHolder);
+				return new Match<T>(removedPart, Optional.ofNullable(valueHolder));
 			}
 		}
 		return new Match<T>("", null);
 	}
 
 	private String getValueNotNull(Match<? extends RegexValueHolder> valueHolder) {
-		if (valueHolder.type == null) {
-			return "";
-		}
-		else {
-			return valueHolder.type.getRegexValue();
-		}
+		return valueHolder.type.map(RegexValueHolder::getRegexValue).orElse("");
 	}
 
 	@Override

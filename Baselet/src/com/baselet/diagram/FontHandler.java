@@ -139,6 +139,7 @@ public class FontHandler {
 		}
 		double fontSize = getFontSize(applyZoom);
 		FormattedFont formattedFont = new FormattedFont(stringWithFormatLabels, fontSize, getFont(applyZoom), g2.getFontRenderContext());
+		FontColor color = new FontColor(stringWithFormatLabels);
 		fontrenderContext = g2.getFontRenderContext(); // TODO workaround to make sure getTextSize works without a graphics object
 
 		if (align == AlignHorizontal.CENTER) {
@@ -147,7 +148,7 @@ public class FontHandler {
 		else if (align == AlignHorizontal.RIGHT) {
 			x = (int) (x - formattedFont.getWidth());
 		}
-
+		g2.setColor(FontColor.getColor());
 		g2.drawString(formattedFont.getAttributedCharacterIterator(), (float) x, (float) y);
 	}
 

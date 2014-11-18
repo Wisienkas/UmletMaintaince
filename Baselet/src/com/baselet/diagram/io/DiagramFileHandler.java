@@ -119,6 +119,7 @@ public class DiagramFileHandler {
 			}
 			else {
 				saveFileChooser = new JFileChooser(Constants.last_saved_path);
+
 			}
 		}
 
