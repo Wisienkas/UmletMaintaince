@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
@@ -64,11 +65,11 @@ public class ClassMenuItemPointer extends JMenuItem {
 			public void actionPerformed(ActionEvent e) {
 				SwingUtilities.invokeLater(
 					() -> {
-						log.info("Combining Parent: " + parent.getId()
-								+ " and child: " + child.getId());
+						// Reset indication color
 						handler.getController().undo();
 						handler.getController()
-						.executeCommand(new Relation(parent, child));						}
+						.executeCommand(new Relation(Optional.ofNullable(parent), child));						
+					}
 				);
 			}
 		});

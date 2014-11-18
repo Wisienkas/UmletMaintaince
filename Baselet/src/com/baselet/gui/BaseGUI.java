@@ -83,6 +83,7 @@ public abstract class BaseGUI {
 		contextMenu.add(createLayerMenu(menuFactory));
 
 		contextMenu.add(menuFactory.createRelateAround(e, handler));
+		contextMenu.add(menuFactory.createRemoveParent(e, handler));
 
 		return contextMenu;
 	}

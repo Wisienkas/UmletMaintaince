@@ -49,6 +49,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -308,6 +309,19 @@ public class MenuFactorySwing extends MenuFactory {
 		}
 
 		return menu;
+	}
+	
+	public JMenuItem createRemoveParent(GridElement child, DiagramHandler handler) {
+		JMenuItem item = new JMenu("Remove parent");
+		if(handler.getRelationManager().hasParent(child)) {
+			item.addActionListener(e -> {
+				handler.getController().executeCommand(new Relation(Optional.empty(), child));
+			});
+		} else {
+			item.setEnabled(false);
+		}
+		
+		return item;
 	}
 
 	private JMenuItem createJMenuItem(boolean grayWithoutDiagram, final String name, Object param) {

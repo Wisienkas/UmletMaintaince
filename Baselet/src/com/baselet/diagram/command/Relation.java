@@ -11,11 +11,11 @@ public class Relation extends Command {
 
 	private static final Logger log = Logger.getLogger(Relation.class);
 
-	private final GridElement parent;
-	private final GridElement child;
+	private Optional<GridElement> parent;
+	private GridElement child;
 	private Optional<GridElement> oldParent;
 
-	public Relation(GridElement parent, GridElement child) {
+	public Relation(Optional<GridElement> parent, GridElement child) {
 		this.parent = parent;
 		this.child = child;
 		oldParent = Optional.empty();
@@ -25,24 +25,37 @@ public class Relation extends Command {
 	public void execute(DiagramHandler handler) {
 		super.execute(handler);
 		oldParent = handler.getRelationManager().getParent(child);
-		handler.getRelationManager().addPair(parent, child);
+		oldParent.ifPresent(old -> {
+			handler.getRelationManager().removeChild(child, old);
+			old.setRelateSettings(handler.getRelationManager().getJSON(old));
+			log.info("Old Parent: " + handler.getRelationManager().getJSON(old));
+		});
+		parent.ifPresent(par -> {
+			handler.getRelationManager().addPair(par, child);
+			par.setRelateSettings(handler.getRelationManager().getJSON(par));
+			log.info("Parent: " + handler.getRelationManager().getJSON(par));
+		});
 		String childJson = handler.getRelationManager().getJSON(child);
-		String parentJson = handler.getRelationManager().getJSON(parent);
 		child.setRelateSettings(childJson);
-		parent.setRelateSettings(parentJson);
 		log.info("Child: " + childJson);
-		log.info("Parent: " + parentJson);
 	}
 
 	@Override
 	public void undo(DiagramHandler handler) {
 		super.undo(handler);
-		handler.getRelationManager().removeChild(child, parent);
-		oldParent.ifPresent(old -> handler.getRelationManager().addPair(old, this.child));
+		parent.ifPresent(par -> {
+			handler.getRelationManager().removeChild(child, par);
+			par.setRelateSettings(handler.getRelationManager().getJSON(par));
+			log.info("Parent: " + handler.getRelationManager().getJSON(par));
+		});
+		oldParent.ifPresent(old -> {
+			handler.getRelationManager().addPair(old, this.child);
+			old.setRelateSettings(handler.getRelationManager().getJSON(old));
+			log.info("Old Parent: " + handler.getRelationManager().getJSON(old));
+		});
 		String childJson = handler.getRelationManager().getJSON(child);
-		String parentJson = handler.getRelationManager().getJSON(parent);
+		child.setRelateSettings(childJson);
 		log.info("Child: " + childJson);
-		log.info("Parent: " + parentJson);
 	}
 
 }

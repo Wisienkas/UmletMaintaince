@@ -609,4 +609,14 @@ public abstract class OldGridElement extends JComponent implements GridElement, 
 	public String getRelateSettings(){
 		return "";
 	}
+	
+	@Override
+	public void addParentListener(MoveListener listener, GridElement parent){
+		
+	}
+	
+	@Override
+	public void removeParentListener(GridElement parent){
+		
+	}
 }

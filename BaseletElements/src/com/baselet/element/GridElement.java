@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.swt.custom.MovementListener;
+
 import com.baselet.control.enumerations.AlignHorizontal;
 import com.baselet.control.enumerations.Direction;
 import com.baselet.diagram.draw.geom.Dimension;
@@ -87,4 +89,8 @@ public interface GridElement extends HasPanelAttributes {
 	void setRelateSettings(String json);
 	
 	String getRelateSettings();
+	
+	void addParentListener(MoveListener listener, GridElement parent);
+	
+	void removeParentListener(GridElement parent);
 }
