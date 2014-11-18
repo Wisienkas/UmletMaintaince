@@ -3,10 +3,13 @@ package com.baselet.elementnew;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -26,6 +29,7 @@ import com.baselet.diagram.draw.geom.Rectangle;
 import com.baselet.diagram.draw.helper.ColorOwn;
 import com.baselet.diagram.draw.helper.ColorOwn.Transparency;
 import com.baselet.element.GridElement;
+import com.baselet.element.MoveListener;
 import com.baselet.element.UndoHistory;
 import com.baselet.element.UndoInformation;
 import com.baselet.element.sticking.PointChange;
@@ -53,6 +57,8 @@ public abstract class NewGridElement implements GridElement {
 	private DrawHandlerInterface handler;
 
 	private List<String> panelAttributes;
+	private String relateSettings;
+	private Map<GridElement, MoveListener> moveListenerMap;
 
 	protected PropertiesParserState state;
 
@@ -60,6 +66,7 @@ public abstract class NewGridElement implements GridElement {
 
 	public void init(Rectangle bounds, String panelAttributes, String additionalAttributes, Component component, DrawHandlerInterface handler) {
 		this.component = component;
+		this.moveListenerMap = new TreeMap<>();
 		drawer = component.getDrawHandler();
 		metaDrawer = component.getMetaDrawHandler();
 		setPanelAttributesHelper(panelAttributes);
@@ -189,12 +196,12 @@ public abstract class NewGridElement implements GridElement {
 
 	@Override
 	public String getAdditionalAttributes() {
-		return ""; // usually GridElements have no additional attributes
+		return "";
 	}
 
 	@Override
 	public void setAdditionalAttributes(String additionalAttributes) {
-		// usually GridElements have no additional attributes
+		// Not used, but used by some extensions.
 	}
 
 	@Override
@@ -251,6 +258,11 @@ public abstract class NewGridElement implements GridElement {
 	@Override
 	public void changeSize(int diffx, int diffy) {
 		setSize(getRectangle().width + diffx, getRectangle().height + diffy);
+		informListeners();
+	}
+
+	private void informListeners() {
+		this.moveListenerMap.values().forEach(listener -> listener.moved(this));
 	}
 
 	@Override
@@ -261,6 +273,7 @@ public abstract class NewGridElement implements GridElement {
 	@Override
 	public void setLocationDifference(int diffx, int diffy) {
 		setLocation(getRectangle().x + diffx, getRectangle().y + diffy);
+		informListeners();
 	}
 
 	@Override
@@ -268,6 +281,7 @@ public abstract class NewGridElement implements GridElement {
 		Rectangle rect = getRectangle();
 		rect.setLocation(x, y);
 		component.setBoundsRect(rect);
+		informListeners();
 	}
 
 	@Override
@@ -280,6 +294,7 @@ public abstract class NewGridElement implements GridElement {
 				updateModelFromText();
 			}
 		}
+		informListeners();
 	}
 
 	@Override
@@ -434,6 +449,7 @@ public abstract class NewGridElement implements GridElement {
 		if (undoable) {
 			undoStack.add(new UndoInformation(getRectangle(), oldRect, stickableChanges, getGridSize(), oldAddAttr));
 		}
+		informListeners();
 	}
 
 	@Override
@@ -489,5 +505,25 @@ public abstract class NewGridElement implements GridElement {
 		UndoInformation undoInfoA = undoStack.remove();
 		UndoInformation undoInfoB = undoStack.remove();
 		undoStack.add(undoInfoA.merge(undoInfoB));
+	}
+	
+	@Override
+	public void setRelateSettings(String json){
+		relateSettings = json;
+	}
+	
+	@Override
+	public String getRelateSettings(){
+		return relateSettings == null ? "" : relateSettings;
+	}
+	
+	@Override
+	public void addParentListener(MoveListener listener, GridElement parent){
+		this.moveListenerMap.putIfAbsent(parent, listener);
+	}
+	
+	@Override
+	public void removeParentListener(GridElement parent){
+		this.moveListenerMap.remove(parent);
 	}
 }

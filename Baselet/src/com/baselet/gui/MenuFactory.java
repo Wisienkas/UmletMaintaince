@@ -246,18 +246,6 @@ public class MenuFactory {
 					}
 					actualHandler.getController().executeCommand(new ChangeElementSetting(LayerFacet.KEY, valueMap));
 				}
-				else if (menuItem.equals(RELATE_AROUND) && actualHandler != null
-							&& actualSelector != null) {
-					if (param instanceof Map<?, ?>) {
-
-						@SuppressWarnings("unchecked")
-						Map<String, GridElement> args = (Map<String, GridElement>) param;
-						log.info("Combining Parent: " + args.get("parent").getId()
-								+ " and child: " + args.get("child").getId());
-						actualHandler.getController()
-								.executeCommand(new Relation(args.get("parent"), args.get("child")));
-					}
-				}
 			}
 		});
 	}

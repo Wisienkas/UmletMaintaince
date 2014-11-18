@@ -41,8 +41,10 @@ public class Controller {
 		if (newCommand.isChangingDiagram()) {
 			handler.setChanged(true);
 		}
-
-		Main.getInstance().getGUI().updateGrayedOutMenuItems(handler);
+		
+		if(Main.getInstance().getGUI() != null) {
+			Main.getInstance().getGUI().updateGrayedOutMenuItems(handler);
+		}
 	}
 
 	public void undo() {

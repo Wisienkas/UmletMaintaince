@@ -49,6 +49,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -56,6 +57,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -65,6 +67,8 @@ import com.baselet.control.Constants;
 import com.baselet.control.Constants.Os;
 import com.baselet.control.Constants.SystemInfo;
 import com.baselet.control.Main;
+import com.baselet.diagram.DiagramHandler;
+import com.baselet.diagram.command.Relation;
 import com.baselet.diagram.draw.helper.ColorOwn;
 import com.baselet.element.GridElement;
 import com.baselet.gui.menu.ClassMenuItemPointer;
@@ -281,17 +285,16 @@ public class MenuFactorySwing extends MenuFactory {
 		return alignMenu;
 	}
 
-	public JMenu createRelateAround(GridElement e) {
-		log.info("Finding componenets around...");
+	public JMenu createRelateAround(GridElement el, DiagramHandler handler) {
 
 		Set<ComponentSwing> relevant = new HashSet<ComponentSwing>();
-		for (Component c : Main.getInstance().getDiagramHandler().getDrawPanel().getComponents()) {
+		
+		for (Component c : handler.getDrawPanel().getComponents()) {
 			try {
-
 				if (!(c instanceof com.baselet.gui.StartUpHelpText)) {
 					ComponentSwing cs = (ComponentSwing) c; // Casting because ComponentSwing extends JComponent which extends Container which extends Component
 
-					if (cs != e.getComponent() && cs.getBoundsRect().contains(e.getRectangle())) {
+					if (cs != el.getComponent() && cs.getBoundsRect().contains(el.getRectangle())) {
 						relevant.add(cs);
 					}
 				}
@@ -299,27 +302,26 @@ public class MenuFactorySwing extends MenuFactory {
 				log.error(ex);
 			}
 		}
-		log.info("Found: " + relevant.size() + " Around element!");
 
 		JMenu menu = new JMenu(RELATE_AROUND);
 		for (ComponentSwing cs : relevant) {
-			log.info("Adding component with name: " + cs.getClass().getSimpleName());
-			ClassMenuItemPointer cmip = new ClassMenuItemPointer(cs);
-
-			final Map<String, GridElement> params = new HashMap<String, GridElement>();
-			params.put("parent", cs.getGridElement());
-			params.put("child", e);
-
-			cmip.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					doAction(RELATE_AROUND, params);
-				}
-			});
-			menu.add(cmip);
+			menu.add(new ClassMenuItemPointer(cs.getGridElement(), el, handler));
 		}
 
 		return menu;
+	}
+	
+	public JMenuItem createRemoveParent(GridElement child, DiagramHandler handler) {
+		JMenuItem item = new JMenu("Remove parent");
+		if(handler.getRelationManager().hasParent(child)) {
+			item.addActionListener(e -> {
+				handler.getController().executeCommand(new Relation(Optional.empty(), child));
+			});
+		} else {
+			item.setEnabled(false);
+		}
+		
+		return item;
 	}
 
 	private JMenuItem createJMenuItem(boolean grayWithoutDiagram, final String name, Object param) {

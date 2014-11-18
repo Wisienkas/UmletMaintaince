@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.baselet.control.SharedConstants;
 import com.baselet.control.enumerations.Direction;
 import com.baselet.diagram.draw.DrawHandler;
@@ -30,6 +32,8 @@ import com.baselet.elementnew.settings.Settings;
 
 public class Relation extends NewGridElement implements Stickable {
 
+	private final Logger log = Logger.getLogger(Relation.class);
+	
 	private RelationPointHandler relationPoints;
 
 	@Override
@@ -63,6 +67,7 @@ public class Relation extends NewGridElement implements Stickable {
 		}
 
 		drawer.setForegroundColor(ColorOwn.SELECTION_FG);
+		
 		relationPoints.drawCirclesAndDragBox(drawer);
 	}
 

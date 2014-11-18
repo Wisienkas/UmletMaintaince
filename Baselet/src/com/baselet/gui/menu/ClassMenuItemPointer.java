@@ -1,14 +1,25 @@
 package com.baselet.gui.menu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import com.baselet.diagram.DiagramHandler;
+import com.baselet.diagram.command.ChangeElementSetting;
+import com.baselet.diagram.command.Command;
+import com.baselet.diagram.command.Relation;
 import com.baselet.diagram.draw.geom.Rectangle;
 import com.baselet.diagram.draw.helper.ColorOwn;
+import com.baselet.element.GridElement;
 import com.umlet.elementnew.ComponentSwing;
 
 public class ClassMenuItemPointer extends JMenuItem {
@@ -20,14 +31,12 @@ public class ClassMenuItemPointer extends JMenuItem {
 
 	private static final Logger log = Logger.getLogger(ClassMenuItemPointer.class);
 
-	private final ComponentSwing comp;
+	private GridElement parent;
 
-	private final ColorOwn color;
-
-	public ClassMenuItemPointer(final ComponentSwing cs) {
-		super(cs.getClass().getSimpleName());
-		comp = cs;
-		color = cs.getDrawHandler().getStyle().getBackgroundColor();
+	public ClassMenuItemPointer(GridElement parent, GridElement child, DiagramHandler handler) {
+		super(parent.getId().toString());
+		this.parent = parent;
+		
 		addMouseListener(new MouseListener() {
 
 			@Override
@@ -38,25 +47,43 @@ public class ClassMenuItemPointer extends JMenuItem {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				log.info("exited");
-				cs.getDrawHandler().setBackgroundColor(color);
-				cs.getDrawHandler().drawAll();
+				handler.getController().undo();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				log.info("Entered");
-				cs.getDrawHandler().setBackgroundColor(ColorOwn.BLUE);
-				cs.getDrawHandler().drawAll();
+				handler.getController().executeCommand(getColorSetting("blue", parent));
 			}
 
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		
+		addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtilities.invokeLater(
+					() -> {
+						// Reset indication color
+						handler.getController().undo();
+						handler.getController()
+						.executeCommand(new Relation(Optional.ofNullable(parent), child));						
+					}
+				);
+			}
 		});
 	}
 
+	private Command getColorSetting(String color, GridElement element) {
+		
+		Map<GridElement, String> valueMap = new HashMap<>();
+		valueMap.put(element, color);
+		return new ChangeElementSetting("bg", valueMap);
+	}
+	
 	public Rectangle getRect() {
-		return comp.getBoundsRect();
+		return parent.getComponent().getBoundsRect();
 	}
 
 }

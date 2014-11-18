@@ -39,7 +39,7 @@ public interface GridElement extends HasPanelAttributes {
 	 * position of the element on the drawpanel.
 	 * x and y: distance from the upper left corner of the drawpanel.
 	 * width and height: size of the element.
-	 * 
+	 *
 	 */
 	Rectangle getRectangle();
 
@@ -83,4 +83,12 @@ public interface GridElement extends HasPanelAttributes {
 	void redoDrag();
 
 	void mergeUndoDrag();
+
+	void setRelateSettings(String json);
+
+	String getRelateSettings();
+
+	void addParentListener(MoveListener listener, GridElement parent);
+
+	void removeParentListener(GridElement parent);
 }
