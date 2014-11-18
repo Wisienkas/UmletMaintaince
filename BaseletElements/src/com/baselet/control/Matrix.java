@@ -3,7 +3,9 @@ package com.baselet.control;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Matrix<T> {
+import org.eclipse.jdt.annotation.Nullable;
+
+public class Matrix<@Nullable T> {
 
 	private List<List<T>> matrix = new ArrayList<List<T>>();
 

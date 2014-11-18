@@ -83,4 +83,8 @@ public interface GridElement extends HasPanelAttributes {
 	void redoDrag();
 
 	void mergeUndoDrag();
+	
+	void setRelateSettings(String json);
+	
+	String getRelateSettings();
 }

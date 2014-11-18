@@ -17,6 +17,7 @@ import com.baselet.control.Constants;
 import com.baselet.control.ErrorMessages;
 import com.baselet.control.Main;
 import com.baselet.control.Notifier;
+import com.baselet.control.RelateManager;
 import com.baselet.control.SharedConstants.Program;
 import com.baselet.control.SharedUtils;
 import com.baselet.diagram.draw.geom.Point;
@@ -45,6 +46,8 @@ public class DiagramHandler {
 	protected DrawPanel drawpanel;
 	private final Controller controller;
 	protected DiagramListener listener;
+	private RelateManager relationKeeper;
+	
 	private String helptext;
 	private boolean enabled;
 	private int gridSize;
@@ -54,6 +57,10 @@ public class DiagramHandler {
 
 	public DiagramHandler(File diagram) {
 		this(diagram, false);
+	}
+	
+	public RelateManager getRelationManager() {
+		return relationKeeper;
 	}
 
 	protected DiagramHandler(File diagram, boolean nolistener) {
@@ -84,6 +91,7 @@ public class DiagramHandler {
 		if (!(this instanceof PaletteHandler)) {
 			drawpanel.setComponentPopupMenu(new DiagramPopupMenu(extendedPopupMenu));
 		}
+		relationKeeper = new RelateManager(drawpanel.getGridElements());
 	}
 
 	public void setEnabled(boolean en) {

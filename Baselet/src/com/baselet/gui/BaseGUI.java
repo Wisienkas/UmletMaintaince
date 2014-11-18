@@ -51,7 +51,7 @@ public abstract class BaseGUI {
 
 	public abstract void focusPropertyPane();
 
-	public JPopupMenu getContextMenu(GridElement e) {
+	public JPopupMenu getContextMenu(GridElement e, DiagramHandler handler) {
 		MenuFactorySwing menuFactory = MenuFactorySwing.getInstance();
 
 		JPopupMenu contextMenu = new JPopupMenu();
@@ -82,7 +82,7 @@ public abstract class BaseGUI {
 		contextMenu.add(createAlignmentMenu(menuFactory));
 		contextMenu.add(createLayerMenu(menuFactory));
 
-		contextMenu.add(menuFactory.createRelateAround(e));
+		contextMenu.add(menuFactory.createRelateAround(e, handler));
 
 		return contextMenu;
 	}

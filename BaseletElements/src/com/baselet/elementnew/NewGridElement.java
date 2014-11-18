@@ -3,9 +3,11 @@ package com.baselet.elementnew;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
@@ -53,6 +55,7 @@ public abstract class NewGridElement implements GridElement {
 	private DrawHandlerInterface handler;
 
 	private List<String> panelAttributes;
+	private String relateSettings;
 
 	protected PropertiesParserState state;
 
@@ -189,12 +192,12 @@ public abstract class NewGridElement implements GridElement {
 
 	@Override
 	public String getAdditionalAttributes() {
-		return ""; // usually GridElements have no additional attributes
+		return "";
 	}
 
 	@Override
 	public void setAdditionalAttributes(String additionalAttributes) {
-		// usually GridElements have no additional attributes
+		// Not used, but used by some extensions.
 	}
 
 	@Override
@@ -489,5 +492,15 @@ public abstract class NewGridElement implements GridElement {
 		UndoInformation undoInfoA = undoStack.remove();
 		UndoInformation undoInfoB = undoStack.remove();
 		undoStack.add(undoInfoA.merge(undoInfoB));
+	}
+	
+	@Override
+	public void setRelateSettings(String json){
+		relateSettings = json;
+	}
+	
+	@Override
+	public String getRelateSettings(){
+		return relateSettings == null ? "" : relateSettings;
 	}
 }

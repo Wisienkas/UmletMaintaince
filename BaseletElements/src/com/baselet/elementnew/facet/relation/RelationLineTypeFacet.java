@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.baselet.control.SharedUtils;
 import com.baselet.control.enumerations.LineType;
@@ -24,15 +25,20 @@ import com.baselet.elementnew.facet.KeyValueFacet;
 public class RelationLineTypeFacet extends KeyValueFacet {
 
 	private static class Match<T extends RegexValueHolder> {
-		private final String text;
-		private final Optional<T> type;
+		private String text;
+		private Optional<T> type;
 
 		public Match(String matchedText, Optional<T> matchedObject) {
 			super();
 			this.text = matchedText;
 			this.type = matchedObject;
 		}
-
+		
+		public Match(String matchedText, T matchedObject) {
+			super();
+			this.text = matchedText;
+			this.type = Optional.ofNullable(matchedObject);
+		}
 	}
 
 	public static RelationLineTypeFacet INSTANCE = new RelationLineTypeFacet();
@@ -63,14 +69,14 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 
 		Match<ArrowEnd> leftArrow = extractPart(LEFT_ARROW_STRINGS);
 		Match<LineType> lineType = extractPart(LINE_TYPES);
-		if (leftArrow.type == null && lineType.type == null) {
+		if (!leftArrow.type.isPresent() && !lineType.type.isPresent()) {
 			throw new StyleException("left arrow must be one of the following or empty:\n" + listToString(LEFT_ARROW_STRINGS));
 		}
-		if (lineType.type == null) {
+		if (!lineType.type.isPresent()) {
 			throw new StyleException("lineType must be specified. One of: " + listToString(LINE_TYPES));
 		}
 		Match<ArrowEnd> rightArrow = extractPart(RIGHT_ARROW_STRINGS);
-		if (rightArrow.type == null && !remainingValue.isEmpty()) {
+		if (!rightArrow.type.isPresent() && !remainingValue.isEmpty()) {
 			throw new StyleException("right arrow must be one of the following or empty:\n" + listToString(RIGHT_ARROW_STRINGS));
 		}
 		if (!remainingValue.isEmpty()) {
@@ -94,7 +100,7 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 	}
 
 	public static void drawDefaultLineAndArrows(DrawHandler drawer, RelationPointHandler relationPoints) {
-		drawLineAndArrows(drawer, relationPoints, new Match<LineType>("", Optional.ofNullable(LineType.SOLID)), new Match<ArrowEnd>("", null), new Match<ArrowEnd>("", null));
+		drawLineAndArrows(drawer, relationPoints, new Match<LineType>("", LineType.SOLID), new Match<ArrowEnd>("", Optional.empty()), new Match<ArrowEnd>("", Optional.empty()));
 	}
 
 	private static void drawLineAndArrows(DrawHandler drawer, RelationPointHandler relationPoints, Match<LineType> lineType, Match<ArrowEnd> leftArrow, Match<ArrowEnd> rightArrow) {
@@ -123,6 +129,7 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 		drawer.setLineType(oldLt);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends RegexValueHolder> Match<T> extractPart(List<T> valueHolderList) {
 		for (T valueHolder : valueHolderList) {
 			String regex = "^" + valueHolder.getRegexValue(); // only match from start of the line (left to right)
@@ -130,14 +137,14 @@ public class RelationLineTypeFacet extends KeyValueFacet {
 			if (!remainingValue.equals(newRemainingValue)) {
 				String removedPart = remainingValue.substring(0, remainingValue.length() - newRemainingValue.length());
 				remainingValue = newRemainingValue;
-				return new Match<T>(removedPart, Optional.ofNullable(valueHolder));
+				return new Match<T>(removedPart, valueHolder);
 			}
 		}
-		return new Match<T>("", null);
+		return new Match<T>("", Optional.empty());
 	}
 
 	private String getValueNotNull(Match<? extends RegexValueHolder> valueHolder) {
-		return valueHolder.type.map(RegexValueHolder::getRegexValue).orElse("");
+		return valueHolder.type.isPresent() ? valueHolder.type.get().getRegexValue() : "";
 	}
 
 	@Override
