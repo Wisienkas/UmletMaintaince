@@ -5,7 +5,18 @@ public enum FormatLabels {
 	BOLD("*"),
 	ITALIC("/"),
 	RED("red"),
-	GREEN("green");
+	GREEN("green"),
+	BLUE("blue"),
+	YELLOW("yellow"),
+	MAGENTA("magenta"),
+	WHITE("white"),
+	BLACK("black"),
+	ORANGE("orange"),
+	CYAN("cyan"),
+	DARK_GRAY("darkgray"),
+	GRAY("gray"),
+	LIGHT_GRAY("lightgray"),
+	PINK("pink");
 
 	private String value;
 

@@ -19,11 +19,53 @@ public class FontColor {
 		if (style.getFormat().contains(FormatLabels.RED)) {
 			color = Color.RED;
 		}
-
 		else if (style.getFormat().contains(FormatLabels.GREEN)) {
 			color = Color.GREEN;
 		}
-
+		else if (style.getFormat().contains(FormatLabels.BLUE))
+		{
+			color = Color.BLUE;
+		}
+		else if (style.getFormat().contains(FormatLabels.YELLOW))
+		{
+			color = Color.YELLOW;
+		}
+		else if (style.getFormat().contains(FormatLabels.MAGENTA))
+		{
+			color = Color.MAGENTA;
+		}
+		else if (style.getFormat().contains(FormatLabels.WHITE))
+		{
+			color = Color.WHITE;
+		}
+		else if (style.getFormat().contains(FormatLabels.BLACK))
+		{
+			color = Color.BLACK;
+		}
+		else if (style.getFormat().contains(FormatLabels.ORANGE))
+		{
+			color = Color.ORANGE;
+		}
+		else if (style.getFormat().contains(FormatLabels.CYAN))
+		{
+			color = Color.CYAN;
+		}
+		else if (style.getFormat().contains(FormatLabels.DARK_GRAY))
+		{
+			color = Color.DARK_GRAY;
+		}
+		else if (style.getFormat().contains(FormatLabels.GRAY))
+		{
+			color = Color.GRAY;
+		}
+		else if (style.getFormat().contains(FormatLabels.LIGHT_GRAY))
+		{
+			color = Color.LIGHT_GRAY;
+		}
+		else if (style.getFormat().contains(FormatLabels.PINK))
+		{
+			color = Color.PINK;
+		}
 		else {
 			color = Color.BLACK;
 		}
