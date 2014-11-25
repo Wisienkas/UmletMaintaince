@@ -13,7 +13,7 @@ public class FontColor {
 		findColor(text);
 	}
 
-	private static void findColor(String text) {
+	private void findColor(String text) {
 		StringStyle style = StringStyle.analyzeFormatLabels(text);
 
 		if (style.getFormat().contains(FormatLabels.RED)) {
