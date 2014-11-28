@@ -2,11 +2,9 @@ package com.baselet.diagram.io;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -18,37 +16,36 @@ import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
+import com.baselet.control.Main;
 import com.baselet.diagram.DiagramHandler;
+import com.baselet.diagram.command.MergeChangesFromDisk;
 
 public class FileChangeListener extends Thread {
 	private static final Logger log = Logger.getLogger(FileChangeListener.class.getName());
 
-	File openFile;
-	String originalFileContent;
-	DiagramHandler diagramHandler;
-	DiagramFileHandler diagramFileHandler;
-	long lastModified;
+	private File watchedFile;
+	private String baseContent;
+	private DiagramHandler diagramHandler;
+	private DiagramFileHandler diagramFileHandler;
+	private long lastModified;
 
-	// The are used for the confirmation dialog
-	boolean dontShow;
-	int selectedOption;
+	// These are used for the confirmation dialog
+	private boolean dontShow;
+	private int selectedOption;
 
 	private WatchService watcher;
 	private Scanner openFileScanner;
-	private InputStream resultInputStream;
 
 	public FileChangeListener(DiagramHandler handler, DiagramFileHandler fileHandler, File file) {
-		this.openFile = file;
+		this.watchedFile = file;
 		this.diagramHandler = handler;
 		this.diagramFileHandler = fileHandler;
 		lastModified = file.lastModified();
 
 		// Save the content of the opened file at the time it is opened
 		try {
-			originalFileContent = new Scanner(file).useDelimiter("\\Z").next();
+			baseContent = new Scanner(file).useDelimiter("\\Z").next();
 			this.start();
 		} catch (FileNotFoundException e) {
 			log.warning("Could not start FileChangeListener");
@@ -59,61 +56,51 @@ public class FileChangeListener extends Thread {
 	@Override
 	public void run() {
 		try {
-			java.nio.file.Path myDir = Paths.get(openFile.getParent());
+			java.nio.file.Path myDir = Paths.get(watchedFile.getParent());
 			watcher = myDir.getFileSystem().newWatchService();
 			myDir.register(watcher, ENTRY_MODIFY);
 
-			log.info("Now watching file: " + openFile.getAbsolutePath());
+			log.info("Now watching file: " + watchedFile.getAbsolutePath());
 
 			WatchKey watchKey = watcher.take();
 			while (watchKey != null && !Thread.currentThread().isInterrupted()) {
 				List<WatchEvent<?>> pollEvents = watchKey.pollEvents();
 				for (int i = 0; i < pollEvents.size(); i++) {
 
-					if (openFile.lastModified() == lastModified) {
+					if (watchedFile.lastModified() == lastModified) {
 						continue;
 					}
 
 					// Sleep for a short period to ensure the file operation is finished when we start reading
 					Thread.sleep(2000);
 
-					openFileScanner = new Scanner(openFile);
-					String othersChanges = openFileScanner.useDelimiter("\\Z").next();
+					openFileScanner = new Scanner(watchedFile);
+					String onDiskChanges = openFileScanner.useDelimiter("\\Z").next();
 					openFileScanner.close();
 					String myChanges = diagramFileHandler.createStringToBeSaved();
-					lastModified = openFile.lastModified();
+					String oldBase = baseContent;
+					
+					lastModified = watchedFile.lastModified();
+					baseContent = onDiskChanges;
 
 					// If we were the ones doing the change or the user does not want to merge in changes then just continue
-					if (othersChanges.trim().equals(myChanges.trim()) || !showYesNOOptionPane()) {
+					if (onDiskChanges.trim().equals(myChanges.trim()) || !showYesNOOptionPane()) {
 						continue;
 					}
 
 					diff_match_patch diffGenerator = new diff_match_patch();
-					LinkedList<diff_match_patch.Patch> patches = diffGenerator.patch_make(originalFileContent, othersChanges);
+					LinkedList<diff_match_patch.Patch> patches = diffGenerator.patch_make(oldBase, onDiskChanges);
 					String mergedResult = (String) diffGenerator.patch_apply(patches, myChanges)[0];
-
-					originalFileContent = othersChanges;
-
-					//Now update the diagram onscreen with the new merged result
-					synchronized (diagramHandler.getDrawPanel().getGridElements()) {
-						diagramHandler.getDrawPanel().getGridElements().clear();
-						diagramHandler.getDrawPanel().removeAll();
-
-						SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-						resultInputStream = new ByteArrayInputStream(mergedResult.getBytes());
-						InputHandler xmlhandler = new InputHandler(diagramHandler);
-						parser.parse(resultInputStream, xmlhandler);
-						resultInputStream.close();
-
-						diagramHandler.getDrawPanel().updatePanelAndScrollbars();
-					}
+					
+					//Create and execute the diagram update action
+					diagramHandler.getController().executeCommand(new MergeChangesFromDisk(myChanges, mergedResult));
 				}
 				watchKey.reset();
 				watchKey = watcher.take();
 			}
 		} catch (InterruptedException e) {
 			// The thread is interrupted meaning the diagram has been closed. We will therefore just stop the FileChangedListener
-			log.info("Stopping FileChangeListener for file " + openFile.getAbsolutePath());
+			log.info("Stopping FileChangeListener for file " + watchedFile.getAbsolutePath());
 			Thread.currentThread().interrupt();
 		} catch (Exception e) {
 			// If any other exception apart from an interrupted exception occurs, try restarting the FileChangeListener
@@ -128,9 +115,6 @@ public class FileChangeListener extends Thread {
 				if (openFileScanner != null) {
 					openFileScanner.close();
 				}
-				if(resultInputStream != null){
-					resultInputStream.close();
-				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -141,9 +125,9 @@ public class FileChangeListener extends Thread {
 	private boolean showYesNOOptionPane() {
 		if (!dontShow) {
 			JCheckBox checkbox = new JCheckBox("Do always for this diagram");
-			String message = "Somebody else changed the file: " + openFile.getAbsolutePath() + "\nWould you like to merge the changes into your own changes?";
+			String message = "Somebody else changed the file: " + watchedFile.getAbsolutePath() + "\nWould you like to merge the changes into your own changes?";
 			Object[] params = { message, checkbox };
-			selectedOption = JOptionPane.showConfirmDialog(null, params, "File changed", JOptionPane.YES_NO_OPTION);
+			selectedOption = JOptionPane.showConfirmDialog(Main.getInstance().getGUI().getMainFrame(), params, "File changed", JOptionPane.YES_NO_OPTION);
 			dontShow = checkbox.isSelected();
 		}
 		return selectedOption == JOptionPane.YES_OPTION;
