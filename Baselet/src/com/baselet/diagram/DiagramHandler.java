@@ -209,6 +209,7 @@ public class DiagramHandler {
 			Main.getInstance().getDiagrams().remove(this);
 			Main.getInstance().getGUI().close(this);
 			drawpanel.getSelector().deselectAll();
+			fileHandler.close();
 
 			// update property panel to now selected diagram (or to empty if no diagram exists)
 			DiagramHandler newhandler = Main.getInstance().getDiagramHandler(); //
