@@ -603,6 +603,7 @@ public abstract class OldGridElement extends JComponent implements GridElement, 
 
 	@Override
 	public void setRelateSettings(String json){
+		// NOT SUPPORTED	
 	}
 	
 	@Override
@@ -611,12 +612,17 @@ public abstract class OldGridElement extends JComponent implements GridElement, 
 	}
 	
 	@Override
-	public void addParentListener(MoveListener listener, GridElement parent){
-		
+	public void setParent(GridElement parent) {
+		// NOT SUPPORTED	
 	}
 	
 	@Override
-	public void removeParentListener(GridElement parent){
-		
+	public void addChild(GridElement child) {
+		// NOT SUPPORTED	
+	}
+	
+	@Override
+	public void removeChild(GridElement child) {
+		// NOT SUPPORTED	
 	}
 }

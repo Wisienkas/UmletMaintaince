@@ -70,29 +70,15 @@ public class TestRelate {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	@Test
 	public void testNormalAddPair() {
-		GridElement parent1 = handler.getDrawPanel()
-				.getGridElements()
-				.stream()
-				.filter(g ->
-					g.getPanelAttributes()
-						.contains("Parent 1") &&
-					!g.getPanelAttributes()
-						.contains("child"))
-				.findFirst()
-				.get();
+		GridElement parent1 = getGridElement("Parent 1");
 		Assert.assertNotNull(parent1);
 
-		GridElement child1 = handler.getDrawPanel()
-				.getGridElements()
-				.stream()
-				.filter(g ->
-					g.getPanelAttributes()
-						.contains("child to parent 1, with no childs"))
-				.findFirst()
-				.get();
+		GridElement child1 = getGridElement("child to parent 1, with no childs");
 		Assert.assertNotNull(child1);
 
 		JMenuItem rightClickChild = MenuFactorySwing.getInstance().createRelateAround(child1, handler);
@@ -152,8 +138,38 @@ public class TestRelate {
 					.get() == parent1
 		);
 		
+		// Everything should no longer be true
+		handler.getController().undo();
+
+		Assert.assertFalse("Parent should no longer have any childs", 
+				handler
+					.getRelationManager()
+					.hasChild(parent1));
+		
+		Assert.assertFalse("Child have no parent", 
+				handler
+					.getRelationManager()
+					.getParent(child1)
+					.isPresent());
 	}
 
+	private GridElement getGridElement(String name) {
+		GridElement parent1 = handler.getDrawPanel()
+				.getGridElements()
+				.stream()
+				.filter(g ->
+					g.getPanelAttributes()
+						.contains(name)
+						)
+				.findFirst()
+				.get();
+		return parent1;
+	}
+
+	/**
+	 * Used to invoke the Create parent command
+	 * @param menuElement
+	 */
 	private void doRecursive(MenuElement menuElement) {
 		for(MenuElement me : menuElement.getSubElements()){
 			if(me instanceof JMenuItem) {
