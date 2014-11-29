@@ -57,4 +57,12 @@ public class MergeChangesFromDisk extends Command {
 			}
 		}
 	}
+
+	public String getOriginalContent() {
+		return originalContent;
+	}
+
+	public String getMergedContent() {
+		return mergedContent;
+	}
 }

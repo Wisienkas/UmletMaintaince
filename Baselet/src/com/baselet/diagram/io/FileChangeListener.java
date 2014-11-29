@@ -18,7 +18,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 
 import com.baselet.control.Main;
-import com.baselet.diagram.DiagramHandler;
 import com.baselet.diagram.command.MergeChangesFromDisk;
 
 public class FileChangeListener extends Thread {
@@ -26,20 +25,18 @@ public class FileChangeListener extends Thread {
 
 	private File watchedFile;
 	private String baseContent;
-	private DiagramHandler diagramHandler;
 	private DiagramFileHandler diagramFileHandler;
 	private long lastModified;
 
 	// These are used for the confirmation dialog
-	private boolean dontShow;
-	private int selectedOption;
+	public boolean dontShow;
+	public int selectedOption;
 
 	private WatchService watcher;
 	private Scanner openFileScanner;
 
-	public FileChangeListener(DiagramHandler handler, DiagramFileHandler fileHandler, File file) {
+	public FileChangeListener(DiagramFileHandler fileHandler, File file) {
 		this.watchedFile = file;
-		this.diagramHandler = handler;
 		this.diagramFileHandler = fileHandler;
 		lastModified = file.lastModified();
 
@@ -88,12 +85,13 @@ public class FileChangeListener extends Thread {
 						continue;
 					}
 
+					log.info("Merging in changes");
 					diff_match_patch diffGenerator = new diff_match_patch();
 					LinkedList<diff_match_patch.Patch> patches = diffGenerator.patch_make(oldBase, onDiskChanges);
 					String mergedResult = (String) diffGenerator.patch_apply(patches, myChanges)[0];
 					
 					//Create and execute the diagram update action
-					diagramHandler.getController().executeCommand(new MergeChangesFromDisk(myChanges, mergedResult));
+					diagramFileHandler.getDiagramController().executeCommand(new MergeChangesFromDisk(myChanges, mergedResult));
 				}
 				watchKey.reset();
 				watchKey = watcher.take();

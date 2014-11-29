@@ -37,6 +37,7 @@ import com.baselet.control.Main;
 import com.baselet.control.Notifier;
 import com.baselet.control.Path;
 import com.baselet.control.SharedConstants.Program;
+import com.baselet.diagram.Controller;
 import com.baselet.diagram.DiagramHandler;
 import com.baselet.element.GridElement;
 import com.baselet.elementnew.NewGridElement;
@@ -73,9 +74,9 @@ public class DiagramFileHandler {
 		handler = diagramHandler;
 		if (file != null) {
 			fileName = file.getName();
-			//We will only start a fileChangeListener if the file is not one of the internally used palletes
+			// We will only start a fileChangeListener if the file is not one of the internally used palletes
 			if (!file.getAbsolutePath().contains("Baselet\\palettes\\")) {
-				fileChangelistener = new FileChangeListener(handler, this, file);
+				fileChangelistener = new FileChangeListener(this, file);
 			}
 		}
 		else {
@@ -280,7 +281,7 @@ public class DiagramFileHandler {
 			if (fileChangelistener != null) {
 				fileChangelistener.stopListening();
 			}
-			fileChangelistener = new FileChangeListener(handler, this, file);
+			fileChangelistener = new FileChangeListener(this, file);
 		}
 		else {
 			exportFile = fileToSave;
@@ -331,8 +332,9 @@ public class DiagramFileHandler {
 		out.print(tmp);
 		out.close();
 		if (!tempFile) {
-			handler.setChanged(false);
 			Constants.recentlyUsedFilesList.add(saveToFile.getAbsolutePath());
+			if (handler != null)
+				handler.setChanged(false);
 		}
 		Notifier.getInstance().showNotification(saveToFile.getAbsolutePath() + " saved");
 	}
@@ -457,4 +459,11 @@ public class DiagramFileHandler {
 		}
 	}
 
+	public FileChangeListener getFileChangeListener() {
+		return fileChangelistener;
+	}
+
+	public Controller getDiagramController() {
+		return handler.getController();
+	}
 }
