@@ -1,6 +1,7 @@
 package com.baselet.diagram.io;
 
 import java.awt.Color;
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -35,7 +36,7 @@ import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.umlet.element.ActivityDiagramText;
-import com.umlet.element.SequenceDiagram;
+//import com.umlet.element.SequenceDiagramTest;
 
 public class OutputHandler {
 
@@ -82,7 +83,9 @@ public class OutputHandler {
 	private static void exportToOutputStream(String extension, OutputStream ostream, DiagramHandler handler, Collection<GridElement> entities) throws IOException {
 		// Issue 159: the old all in one grid elements calculate their real size AFTER painting. although it's bad design it works for most cases, but batch-export can fail if the element width in the uxf is wrong (eg if it was created using another umlet-default-fontsize), therefore a pseudo-paint call is made to get the real size
 		for (GridElement ge : entities) {
-			if (ge instanceof SequenceDiagram || ge instanceof ActivityDiagramText) {
+			if (
+//					ge instanceof SequenceDiagramTest || 
+					ge instanceof ActivityDiagramText) {
 				((OldGridElement) ge).paint(new EpsGraphics2D());
 			}
 		}

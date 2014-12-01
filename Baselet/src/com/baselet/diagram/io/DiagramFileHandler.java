@@ -49,29 +49,34 @@ public class DiagramFileHandler {
 	private static JFileChooser saveFileChooser;
 
 	private String fileName;
-	private final DiagramHandler handler;
+	private DiagramHandler handler;
+	private FileChangeListener fileChangelistener;
 	private File file;
 	private File exportFile;
-	private final HashMap<String, FileFilter> filters = new HashMap<String, FileFilter>();
-	private final HashMap<FileFilter, String> fileextensions = new HashMap<FileFilter, String>();
+	private HashMap<String, FileFilter> filters = new HashMap<String, FileFilter>();
+	private HashMap<FileFilter, String> fileextensions = new HashMap<FileFilter, String>();
 
-	private final OwnFileFilter filterxml = new OwnFileFilter(Program.EXTENSION, Program.NAME + " diagram format");
-	private final OwnFileFilter filterbmp = new OwnFileFilter("bmp", "BMP");
-	private final OwnFileFilter filtereps = new OwnFileFilter("eps", "EPS");
-	private final OwnFileFilter filtergif = new OwnFileFilter("gif", "GIF");
-	private final OwnFileFilter filterjpg = new OwnFileFilter("jpg", "JPG");
-	private final OwnFileFilter filterpdf = new OwnFileFilter("pdf", "PDF");
-	private final OwnFileFilter filterpng = new OwnFileFilter("png", "PNG");
-	private final OwnFileFilter filtersvg = new OwnFileFilter("svg", "SVG");
+	private OwnFileFilter filterxml = new OwnFileFilter(Program.EXTENSION, Program.NAME + " diagram format");
+	private OwnFileFilter filterbmp = new OwnFileFilter("bmp", "BMP");
+	private OwnFileFilter filtereps = new OwnFileFilter("eps", "EPS");
+	private OwnFileFilter filtergif = new OwnFileFilter("gif", "GIF");
+	private OwnFileFilter filterjpg = new OwnFileFilter("jpg", "JPG");
+	private OwnFileFilter filterpdf = new OwnFileFilter("pdf", "PDF");
+	private OwnFileFilter filterpng = new OwnFileFilter("png", "PNG");
+	private OwnFileFilter filtersvg = new OwnFileFilter("svg", "SVG");
 
-	private final OwnFileFilter[] saveFileFilter = new OwnFileFilter[] { filterxml };
-	private final OwnFileFilter[] exportFileFilter = new OwnFileFilter[] { filterbmp, filtereps, filtergif, filterjpg, filterpdf, filterpng, filtersvg };
-	private final List<OwnFileFilter> allFileFilters = new ArrayList<OwnFileFilter>();
+	private OwnFileFilter[] saveFileFilter = new OwnFileFilter[] { filterxml };
+	private OwnFileFilter[] exportFileFilter = new OwnFileFilter[] { filterbmp, filtereps, filtergif, filterjpg, filterpdf, filterpng, filtersvg };
+	private List<OwnFileFilter> allFileFilters = new ArrayList<OwnFileFilter>();
 
 	protected DiagramFileHandler(DiagramHandler diagramHandler, File file) {
 		handler = diagramHandler;
 		if (file != null) {
 			fileName = file.getName();
+			//We will only start a fileChangeListener if the file is not one of the internally used palletes
+			if (!file.getAbsolutePath().contains("Baselet\\palettes\\")) {
+				fileChangelistener = new FileChangeListener(handler, this, file);
+			}
 		}
 		else {
 			fileName = "new." + Program.EXTENSION;
@@ -102,17 +107,7 @@ public class DiagramFileHandler {
 			}
 		}
 		else {
-			// When saving a new file, we need to either check if another file is open,
-			// if it is we use its directory, else we use the directory of the last opened file....
-			// only if it is the first time the program run we want it to open the save dialog in the program directory:
-			if (saveFileChooser != null) {
-				File lastSavedFile = saveFileChooser.getCurrentDirectory();
-				String path = lastSavedFile.getPath();
-				saveFileChooser = new JFileChooser(path);
-			}
-			else {
-				saveFileChooser = new JFileChooser(Constants.last_saved_path);
-			}
+			saveFileChooser = new JFileChooser(System.getProperty("user.dir"));
 		}
 
 		saveFileChooser.setAcceptAllFileFilterUsed(false); // We don't want "all files" as a choice
@@ -153,7 +148,6 @@ public class DiagramFileHandler {
 		String sElType = c.getName();
 		String sElPanelAttributes = e.getPanelAttributes();
 		String sElAdditionalAttributes = e.getAdditionalAttributes();
-		String sElRelateAttributes = e.getRelateSettings();
 
 		Element el = doc.createElement("element");
 
@@ -194,10 +188,6 @@ public class DiagramFileHandler {
 		Element elAA = doc.createElement("additional_attributes");
 		elAA.appendChild(doc.createTextNode(sElAdditionalAttributes));
 		el.appendChild(elAA);
-		
-		Element elRA = doc.createElement("relate_settings");
-		elRA.appendChild(doc.createTextNode(sElRelateAttributes));
-		el.appendChild(elRA);
 
 		if (e instanceof CustomElement) {
 			Element elCO = doc.createElement("custom_code");
@@ -286,6 +276,11 @@ public class DiagramFileHandler {
 			file = fileToSave;
 			setFileName(file.getName());
 			save();
+
+			if (fileChangelistener != null) {
+				fileChangelistener.stopListening();
+			}
+			fileChangelistener = new FileChangeListener(handler, this, file);
 		}
 		else {
 			exportFile = fileToSave;
@@ -362,9 +357,6 @@ public class DiagramFileHandler {
 			}
 			fileName = selectedFileWithExt.getAbsolutePath();
 		}
-		if (fileName != null) {
-			Constants.last_saved_path = fileName;
-		}
 		return fileName;
 	}
 
@@ -405,8 +397,8 @@ public class DiagramFileHandler {
 	}
 
 	protected class OwnFileFilter extends FileFilter {
-		private final String format;
-		private final String description;
+		private String format;
+		private String description;
 
 		protected OwnFileFilter(String format, String description) {
 			this.format = format;
@@ -457,6 +449,12 @@ public class DiagramFileHandler {
 			return false;
 		}
 		return true;
+	}
+
+	public void close() {
+		if (fileChangelistener != null) {
+			fileChangelistener.stopListening();
+		}
 	}
 
 }

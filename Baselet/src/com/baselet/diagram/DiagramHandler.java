@@ -40,11 +40,11 @@ public class DiagramHandler {
 	private static final Logger log = Logger.getLogger(DiagramHandler.class);
 
 	private boolean isChanged;
-	private DiagramFileHandler fileHandler;
-	private FontHandler fontHandler;
+	private final DiagramFileHandler fileHandler;
+	private final FontHandler fontHandler;
 
 	protected DrawPanel drawpanel;
-	private Controller controller;
+	private final Controller controller;
 	protected DiagramListener listener;
 	private RelateManager relationKeeper;
 	
@@ -209,6 +209,7 @@ public class DiagramHandler {
 			Main.getInstance().getDiagrams().remove(this);
 			Main.getInstance().getGUI().close(this);
 			drawpanel.getSelector().deselectAll();
+			fileHandler.close();
 
 			// update property panel to now selected diagram (or to empty if no diagram exists)
 			DiagramHandler newhandler = Main.getInstance().getDiagramHandler(); //

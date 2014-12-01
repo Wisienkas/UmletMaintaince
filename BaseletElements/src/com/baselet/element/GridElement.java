@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.swt.custom.MovementListener;
-
 import com.baselet.control.enumerations.AlignHorizontal;
 import com.baselet.control.enumerations.Direction;
 import com.baselet.diagram.draw.geom.Dimension;
@@ -41,7 +39,7 @@ public interface GridElement extends HasPanelAttributes, Relateable{
 	 * position of the element on the drawpanel.
 	 * x and y: distance from the upper left corner of the drawpanel.
 	 * width and height: size of the element.
-	 * 
+	 *
 	 */
 	Rectangle getRectangle();
 
@@ -85,8 +83,9 @@ public interface GridElement extends HasPanelAttributes, Relateable{
 	void redoDrag();
 
 	void mergeUndoDrag();
-	
+
 	void setRelateSettings(String json);
-	
+
 	String getRelateSettings();
+
 }
