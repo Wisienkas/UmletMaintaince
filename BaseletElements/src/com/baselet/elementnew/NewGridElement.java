@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -58,7 +59,8 @@ public abstract class NewGridElement implements GridElement {
 
 	private List<String> panelAttributes;
 	private String relateSettings;
-	private Map<GridElement, MoveListener> moveListenerMap;
+	private Optional<GridElement> parent;
+	private Set<GridElement> children = new HashSet<GridElement>();
 
 	protected PropertiesParserState state;
 
@@ -66,7 +68,6 @@ public abstract class NewGridElement implements GridElement {
 
 	public void init(Rectangle bounds, String panelAttributes, String additionalAttributes, Component component, DrawHandlerInterface handler) {
 		this.component = component;
-		this.moveListenerMap = new TreeMap<>();
 		drawer = component.getDrawHandler();
 		metaDrawer = component.getMetaDrawHandler();
 		setPanelAttributesHelper(panelAttributes);
@@ -262,7 +263,6 @@ public abstract class NewGridElement implements GridElement {
 	}
 
 	private void informListeners() {
-		this.moveListenerMap.values().forEach(listener -> listener.moved(this));
 	}
 
 	@Override
@@ -518,12 +518,17 @@ public abstract class NewGridElement implements GridElement {
 	}
 	
 	@Override
-	public void addParentListener(MoveListener listener, GridElement parent){
-		this.moveListenerMap.putIfAbsent(parent, listener);
+	public void setParent(GridElement parent) {
+		this.parent = Optional.ofNullable(parent);
 	}
 	
 	@Override
-	public void removeParentListener(GridElement parent){
-		this.moveListenerMap.remove(parent);
+	public void addChild(GridElement child) {
+		this.children.add(child);
+	}
+	
+	@Override
+	public void removeChild(GridElement child) {
+		this.children.remove(child);
 	}
 }

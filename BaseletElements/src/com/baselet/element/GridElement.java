@@ -15,7 +15,7 @@ import com.baselet.element.sticking.StickingPolygon;
 import com.baselet.elementnew.Component;
 import com.baselet.elementnew.ElementId;
 
-public interface GridElement extends HasPanelAttributes {
+public interface GridElement extends HasPanelAttributes, Relateable{
 
 	void setRectangle(Rectangle bounds);
 
@@ -88,7 +88,4 @@ public interface GridElement extends HasPanelAttributes {
 
 	String getRelateSettings();
 
-	void addParentListener(MoveListener listener, GridElement parent);
-
-	void removeParentListener(GridElement parent);
 }
