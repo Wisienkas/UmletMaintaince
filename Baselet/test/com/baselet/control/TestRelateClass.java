@@ -2,6 +2,8 @@ package com.baselet.control;
 
 import static org.junit.Assert.*;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -86,5 +88,37 @@ public class TestRelateClass {
 				0, 
 				relate.children.size(),
 				0);
+	}
+	
+	@Test
+	public void testParentGet() {
+		Relate relate = new Relate(0l);
+		
+		assertTrue(relate.getParent() == null);
+		assertFalse(relate.getOptParent().isPresent());
+		
+		relate.parent = 1l;
+		
+		assertTrue(relate.getParent() == 1l);
+		assertTrue(relate.getOptParent().isPresent());
+	}
+	
+	@Test
+	public void testParentSet() {
+		Relate relate = new Relate(0l);
+		
+		assertTrue(relate.parent == null);
+		
+		relate.setParent(1l);
+		
+		assertTrue(relate.parent == 1l);
+		
+		relate.setOptParent(Optional.empty());
+		
+		assertTrue(relate.parent == null);
+
+		relate.setOptParent(Optional.ofNullable(6l));
+		
+		assertTrue(relate.parent == 6l);
 	}
 }
