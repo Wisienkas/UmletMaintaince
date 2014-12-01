@@ -28,16 +28,13 @@ public class Relation extends Command {
 		oldParent.ifPresent(old -> {
 			handler.getRelationManager().removeChild(child, old);
 			old.setRelateSettings(handler.getRelationManager().getJSON(old));
-			log.info("Old Parent: " + handler.getRelationManager().getJSON(old));
 		});
 		parent.ifPresent(par -> {
 			handler.getRelationManager().addPair(par, child);
 			par.setRelateSettings(handler.getRelationManager().getJSON(par));
-			log.info("Parent: " + handler.getRelationManager().getJSON(par));
 		});
 		String childJson = handler.getRelationManager().getJSON(child);
 		child.setRelateSettings(childJson);
-		log.info("Child: " + childJson);
 	}
 
 	@Override
@@ -46,16 +43,13 @@ public class Relation extends Command {
 		parent.ifPresent(par -> {
 			handler.getRelationManager().removeChild(child, par);
 			par.setRelateSettings(handler.getRelationManager().getJSON(par));
-			log.info("Parent: " + handler.getRelationManager().getJSON(par));
 		});
 		oldParent.ifPresent(old -> {
 			handler.getRelationManager().addPair(old, this.child);
 			old.setRelateSettings(handler.getRelationManager().getJSON(old));
-			log.info("Old Parent: " + handler.getRelationManager().getJSON(old));
 		});
 		String childJson = handler.getRelationManager().getJSON(child);
 		child.setRelateSettings(childJson);
-		log.info("Child: " + childJson);
 	}
 
 }
