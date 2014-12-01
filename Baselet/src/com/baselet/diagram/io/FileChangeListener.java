@@ -85,12 +85,11 @@ public class FileChangeListener extends Thread {
 						continue;
 					}
 
-					log.info("Merging in changes");
-					diff_match_patch diffGenerator = new diff_match_patch();
-					LinkedList<diff_match_patch.Patch> patches = diffGenerator.patch_make(oldBase, onDiskChanges);
-					String mergedResult = (String) diffGenerator.patch_apply(patches, myChanges)[0];
+					log.info("Merging in changes");					
+					//Perform a 3-way merge against the old base
+					String mergedResult = FileChangeListener.merge(oldBase, onDiskChanges, myChanges);
 					
-					//Create and execute the diagram update action
+					//Create and execute the diagram update action // if action is undone we will return to myChanges //
 					diagramFileHandler.getDiagramController().executeCommand(new MergeChangesFromDisk(myChanges, mergedResult));
 				}
 				watchKey.reset();
@@ -119,7 +118,9 @@ public class FileChangeListener extends Thread {
 		}
 	}
 
-	// Returns true if user selected yes, otherwise no
+	/**
+	 * @return true if user selected yes, otherwise no
+	 */
 	private boolean showYesNOOptionPane() {
 		if (!dontShow) {
 			JCheckBox checkbox = new JCheckBox("Do always for this diagram");
@@ -129,6 +130,23 @@ public class FileChangeListener extends Thread {
 			dontShow = checkbox.isSelected();
 		}
 		return selectedOption == JOptionPane.YES_OPTION;
+	}
+	
+	/**
+	 * @return The the result of a 3-way merge operation of changes1 and changes2
+	 * against a common base.  
+	 */
+	public static String merge(String base, String changes1, String changes2) {
+		//Create a new diff_match_patch
+		diff_match_patch diffGenerator = new diff_match_patch();
+		
+		//Calculate the patches needed to go from the base to changes1
+		LinkedList<diff_match_patch.Patch> patches = diffGenerator.patch_make(base, changes1);
+		
+		//Apply those patches to changes2
+		Object[] mergeResult = diffGenerator.patch_apply(patches, changes2); 
+		
+		return (String) mergeResult[0];
 	}
 
 	public void stopListening() {
