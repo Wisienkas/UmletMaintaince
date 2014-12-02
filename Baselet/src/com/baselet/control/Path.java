@@ -199,4 +199,8 @@ public class Path {
 		return manifest;
 	}
 
+	public static String getExtension(String filename) {
+		int dotPosition = filename.lastIndexOf(".");
+		return filename.substring(dotPosition + 1, filename.length());
+	}
 }
