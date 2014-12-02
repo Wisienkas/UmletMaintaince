@@ -1,5 +1,7 @@
 package com.plotlet.parser;
 
+import org.junit.Test;
+
 public class DataSetTest {
 	//
 	// private Parser parser;
@@ -10,9 +12,10 @@ public class DataSetTest {
 	// parser = new Parser();
 	// }
 	//
-	// @Test
-	// public void plainDataTest()
-	// {
+	
+	@Test
+	public void plainDataTest()
+	{
 	// String input;
 	//
 	// input = "data\n"
@@ -61,7 +64,7 @@ public class DataSetTest {
 	// assertArrayEquals(new Double[]{1.0}, dataSet.col(0));
 	// assertArrayEquals(new Double[]{2.0}, dataSet.col(1));
 	// assertArrayEquals(new Double[]{3.0}, dataSet.col(2));
-	// }
+	}
 	//
 	// @Test
 	// public void plainDataTestWithTitleColumn()

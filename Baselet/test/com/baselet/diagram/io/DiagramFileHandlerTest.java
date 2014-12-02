@@ -49,7 +49,7 @@ public class DiagramFileHandlerTest {
 		if (obj != null) {
 			JFileChooser jfc = (JFileChooser) obj;
 			File file = jfc.getCurrentDirectory();
-			org.junit.Assert.assertTrue("The path is not the last saved path!", file.getPath().equals(assertPath));
+			Assert.assertEquals("The path is not the last saved path!", assertPath, file.getPath());
 		}
 	}
 }

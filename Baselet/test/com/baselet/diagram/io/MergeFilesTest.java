@@ -7,26 +7,27 @@ import java.util.UUID;
 import javax.swing.JOptionPane;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.baselet.control.Main;
+import com.baselet.diagram.DiagramHandler;
 
 public class MergeFilesTest {
 	
 	private final static String MERGE_TEST_FILE_NAME = "testsubjects/mergeTest.uxf";
 
-	private MockDiagramFileHandler diagramHandler1;
-	private MockDiagramFileHandler diagramHandler2;
+	private static MockDiagramFileHandler diagramHandler1;
+	private static MockDiagramFileHandler diagramHandler2;
 	
-	private File testFile1;
-	private File testFile2;
+	private static File testFile1;
+	private static File testFile2;
 	
-	@Before
-	public void setupTest() throws InterruptedException {	
-		Main.main(new String[0]);
-		//Have to wait a while for the program to init
-		Thread.sleep(5000);
+	@BeforeClass
+	public static void setupTest() {	
+		// this is required to setup log4j
+		Main.getInstance().initLogger();
+		Main.getInstance().setCurrentDiagramHandler(new DiagramHandler(null));
 		
 		testFile1 = new File(MERGE_TEST_FILE_NAME);
 		testFile2 = new File(MERGE_TEST_FILE_NAME);
@@ -44,19 +45,11 @@ public class MergeFilesTest {
 		listener1.selectedOption = listener2.selectedOption = JOptionPane.YES_OPTION;
 	}
 
+	/**
+	 * Test the core merge functionality of the merge library
+	 */
 	@Test
-	public void mergeTest() throws InterruptedException, IOException {
-		//This first test will test the core merge functionality of the merge library
-		coreMergeFucntion();
-		
-		//The first case simulates one user changing the diagram and the other one does not
-		simpleCase();
-		
-		//The second case simulates both users changing the diagram simultaneously
-		simultaniousChanges();
-	}
-	
-	private void coreMergeFucntion() {
+	public void coreMergeFucntion() {
 		String base = 
 				"aaa\n" +
 				"bbb\n" +
@@ -86,8 +79,15 @@ public class MergeFilesTest {
 		
 		Assert.assertEquals(expected, FileChangeListener.merge(base, changes1, changes2));
 	}
-	
-	private void simpleCase() throws IOException, InterruptedException {
+
+	/**
+	 * Simulates one user changing the diagram and the other one does not
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */ 
+	@Test
+	public void simpleCase() throws IOException, InterruptedException {
 		//Simulate change of the first diagram by randomly appending some string
 		diagramHandler1.diagram += UUID.randomUUID().toString();
 		diagramHandler1.doSave();
@@ -97,8 +97,15 @@ public class MergeFilesTest {
 		
 		Assert.assertEquals(diagramHandler1.diagram, diagramHandler2.diagram);
 	}
-	
-	private void simultaniousChanges() throws IOException, InterruptedException {
+
+	/**
+	 * Simulates both users changing the diagram simultaneously
+	 *  
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void simultaniousChanges() throws IOException, InterruptedException {
 		//Simulate both users are making a change 
 		diagramHandler1.diagram += UUID.randomUUID().toString();
 		diagramHandler2.diagram += UUID.randomUUID().toString();

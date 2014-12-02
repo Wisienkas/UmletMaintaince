@@ -2,34 +2,19 @@ package com.baselet.control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Properties;
 
 import javax.swing.JMenuItem;
 import javax.swing.MenuElement;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.baselet.diagram.DiagramHandler;
-import com.baselet.diagram.draw.DrawHandler;
-import com.baselet.diagram.draw.geom.Rectangle;
 import com.baselet.element.GridElement;
-import com.baselet.elementnew.ElementId;
-import com.baselet.elementnew.NewGridElement;
-import com.baselet.elementnew.PropertiesParserState;
-import com.baselet.elementnew.settings.Settings;
-import com.baselet.gui.MenuFactory;
 import com.baselet.gui.MenuFactorySwing;
-import com.umlet.element.custom.Component;
 
 public class TestRelate {
 
@@ -40,7 +25,7 @@ public class TestRelate {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestLogger.initLogger();
+		Main.getInstance().initLogger();
 		handler = new DiagramHandler(new File(TestRelate.TEST_FILE_NAME));
 	}
 

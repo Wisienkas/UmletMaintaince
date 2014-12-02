@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -32,7 +31,7 @@ public class TestRelateManager {
 
 	@BeforeClass
 	public static void setupBeforeClass() {
-		TestLogger.initLogger();
+		Main.getInstance().initLogger();
 	}
 	
 	public static class MockGridElement implements GridElement {
@@ -203,13 +202,14 @@ public class TestRelateManager {
 		
 	}
 	
+	@SuppressWarnings({ "unused" })
 	@Test
 	public void testConstructorRelateManager() {
 		try{
-			new RelateManager(new ArrayList());
+			new RelateManager(new ArrayList<GridElement>());
 			new RelateManager(Arrays.asList(new MockGridElement(), new MockGridElement()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("testConstructorRelateManager", e);
 			fail("Threw exception on constructor");
 		}
 	}
@@ -220,7 +220,11 @@ public class TestRelateManager {
 		MockGridElement mge1 = new MockGridElement();
 		MockGridElement mge2 = new MockGridElement();
 
+		assertFalse(rm.hasParent(mge2));
+		assertFalse(rm.hasChild(mge1));
+		
 		rm.addPair(mge1, mge2);
+		
 		assertTrue(rm.hasParent(mge2));
 		assertTrue(rm.hasChild(mge1));
 	}

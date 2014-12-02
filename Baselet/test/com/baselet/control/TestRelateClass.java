@@ -16,6 +16,7 @@ public class TestRelateClass {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testConstructorRelateLong() {
 		try{
