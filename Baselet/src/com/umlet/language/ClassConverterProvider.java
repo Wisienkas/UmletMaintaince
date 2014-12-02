@@ -1,7 +1,7 @@
 package com.umlet.language;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.umlet.language.converters.IClassConverter;
@@ -19,13 +19,12 @@ public class ClassConverterProvider {
 		return instance;
 	}
 
-	private final List<IClassConverter<?>> converters;
+	// a converter is available when it has been added to this list
+	private final List<IClassConverter<?>> converters = Arrays.asList(new JavaClassConverter());
 
-	public ClassConverterProvider()
+	private ClassConverterProvider()
 	{
-		// a converter is available when it has been added to this list
-		converters = new LinkedList<IClassConverter<?>>();
-		converters.add(new JavaClassConverter());
+
 	}
 
 	public List<IClassConverter<?>> getConverters()
