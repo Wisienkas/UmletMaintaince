@@ -258,6 +258,7 @@ public abstract class Constants extends SharedConstants {
 	public static String openFileHome = System.getProperty("user.dir");
 	public static String pdfExportFont = ""; // eg in Windows: "pdf_export_font = c:/windows/fonts/msgothic.ttc,1"
 	public static boolean generateClassPackage = true;
+	public static String generateSourceType = "java";
 	public static FieldOptions generateClassFields = FieldOptions.ALL;
 	public static MethodOptions generateClassMethods = MethodOptions.ALL;
 	public static SignatureOptions generateClassSignatures = SignatureOptions.ALL;
